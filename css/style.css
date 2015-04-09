@@ -1,3 +1,4 @@
+// Full page layout
 html, body, .container-fluid, .row {
   height: 100%;
 }
@@ -25,4 +26,9 @@ html, body, .container-fluid, .row {
     display: block;
     background-color: #CCCCCC;
   }
+}
+
+// Top Tracts Canvas
+canvas.top-tracts {
+  width: 100%;
 }

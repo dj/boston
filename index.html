@@ -9,8 +9,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
 <link rel="stylesheet" href="css/bootstrap.min.css">
-</style>
 <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="css/bootstrap-select.min.css">
 <link rel="stylesheet" href="css/style.css">
 <!--[if lt IE 9]>
 <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -30,20 +30,47 @@
   </div>
 </nav>
 
+<!-- BODY CONTAINER -->
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-3 sidebar">
-      Sidebar Content
-    </div>
-  <div class="col-md-9 col-md-offset-3 content">
-    Main Content
-  </div>
-</div>
 
-</div> <!-- /container -->
+    <!-- SIDEBAR COLUMN -->
+    <div class="col-md-3 sidebar">
+
+      <!-- FORM CONTROLS -->
+      <form>
+
+        <!-- DATA TYPE SELECT -->
+        <div class="form-group">
+          <label for="data-type" class="control-label">Data Type</label>
+          <select class="selectpicker form-control" id="data-type" placeholder="Enter email">
+            <option value="">Option</option>
+          </select>
+        </div>
+
+        <!-- KEY -->
+        <label for="data-type" class="control-label">Key</label>
+
+      </form>
+
+      <!-- TOP TRACTS -->
+      <h3>Top Census Tracts</h3>
+      <div class="top-tracts-container">
+        <canvas class="top-tracts"></canvas>
+      </div>
+
+    </div>
+
+    <!-- MAP COLUMN -->
+    <div class="col-md-9 col-md-offset-3 content">
+    </div>
+
+  </div><!--/.row-->
+</div><!--/.container-->
 
 <script src="js/vendor/jquery-1.11.2.min.js"></script>
 <script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/vendor/bootstrap-select.min.js"></script>
 <script src="js/vendor/d3.min.js"></script>
 
 <script src="js/main.js"></script>
