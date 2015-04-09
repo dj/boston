@@ -1,5 +1,5 @@
-// Full page layout
-html, body, .container-fluid, .row {
+/* Full page layout */
+html, body, .container-fluid, .row, .top-tracts-container {
   height: 100%;
 }
 
@@ -17,6 +17,13 @@ html, body, .container-fluid, .row {
   padding-top: 50px;
 }
 
+/* Top Tracts */
+#top-tracts-container {
+  height: 100%;
+  background-color: #efefef;
+  overflow: scroll;
+}
+
 @media (min-width: 992px) {
   .sidebar {
     position: fixed;
@@ -28,7 +35,3 @@ html, body, .container-fluid, .row {
   }
 }
 
-// Top Tracts Canvas
-canvas.top-tracts {
-  width: 100%;
-}
