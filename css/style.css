@@ -11,6 +11,11 @@ html, body, .container-fluid, .row {
   background-color: #CCCCCC;
 }
 
+.sidebar,
+.content {
+  padding-top: 50px;
+}
+
 @media (min-width: 992px) {
   .sidebar {
     position: fixed;
