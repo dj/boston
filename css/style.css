@@ -1,0 +1,23 @@
+html, body, .container-fluid, .row {
+  height: 100%;
+}
+
+.navbar {
+  border-radius: 0;
+  z-index: 1000;
+}
+
+.sidebar {
+  background-color: #CCCCCC;
+}
+
+@media (min-width: 992px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: block;
+    background-color: #CCCCCC;
+  }
+}
