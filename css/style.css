@@ -14,14 +14,19 @@ html, body, .container-fluid, .row, .top-tracts-container {
 
 .sidebar,
 .content {
-  padding-top: 50px;
+  padding: 50px 10px;
 }
 
 /* Top Tracts */
 #top-tracts-container {
-  height: 100%;
   background-color: #efefef;
   overflow: scroll;
+}
+
+#top-tracts text {
+  fill: white;
+  font: 10px sans-serif;
+  text-anchor: end;
 }
 
 @media (min-width: 992px) {
