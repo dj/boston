@@ -48,12 +48,11 @@ function loaded(err, rows) {
 }
 
 function draw(rows, selected) {
-  var domain = d3.extent(rows, function (d) { return d[selected] })
   var x = d3.scale.linear()
-    .domain(domain)
+    .domain(d3.extent(rows, function (d) { return d[selected] }))
     .range([0, width]);
   var color = d3.scale.linear()
-    .domain(domain)
+    .domain(d3.extent(rows, function (d) { return d[selected] }))
     .range(['white', 'red'])
 
   var barHeight = 20;
@@ -76,14 +75,17 @@ function draw(rows, selected) {
   // Append bars
   tractEnter
     .append('rect')
-      // .style({ fill: 'rgb(50,50,50)' });
-      .style('fill', function(d) { return color(d[selected]) } );
+    .attr('class', 'bar')
 
   // Append bar labels
   tractEnter
    .append('text')
    .attr('class', 'bar-label')
 
+  // Update bar fill
+  tractUpdate
+    .selectAll('.bar')
+      .style('fill', function(d) { return color(d[selected]) } );
 
   // Update bar labels
   tractUpdate
