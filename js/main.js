@@ -37,31 +37,31 @@ function loaded(err, rows) {
   $('.selectpicker').selectpicker('refresh');
 
   $('#data-type').on('change', function() {
-    var selected = $(this).find("option:selected").val();
+    var selected = $(this).find('option:selected').val();
+    console.log(selected);
 
-    draw(rows, selected)
+    // TODO: do sorting in event handler before passing to draw
+    var sorted = _.sortBy(rows, selected).reverse();
+
+    draw(sorted, selected)
   })
-
-  draw(rows, 'totalPop');
 }
 
 function draw(rows, selected) {
   var x = d3.scale.linear()
-    .domain([0, d3.max(rows, function (d) { return d[selected] })])
+    .domain(d3.extent(rows, function (d) { return d[selected] }))
     .range([0, width]);
 
   var barHeight = 20;
 
-  var data = _.sortBy(rows, selected).reverse();
-
   // Select the SVG and adjust height to fit data
   var svg = d3.select('#top-tracts')
-    .attr('height', data.length * barHeight)
+    .attr('height', rows.length * barHeight)
 
   var tracts = svg.selectAll('.tract')
-    .data(data, function(d) { return d.tract })
+    .data(rows, function(d) { return d.tract })
 
-  var tractEnter = tracts.enter().append('g'),
+  var tractEnter = tracts.enter().append('g').attr('class', 'tract'),
       tractUpdate = tracts,
       tractExit = tracts.exit();
 
@@ -72,22 +72,27 @@ function draw(rows, selected) {
 
   // Append bar labels
   tractEnter
-   .append("text")
-     // .attr("x", function(d) { return x(d[selected]) - 3; })
-     .attr("x", function(d) { return 100; })
-     .attr("y", barHeight / 2)
-     .attr("dy", ".35em")
-     .text(function(d) { return 'Tract: ' + d.tract; });
+   .append('text')
+     // .attr('x', function(d) { return x(d[selected]) - 3; })
+     .attr('x', function(d) { return 120; })
+     .attr('y', barHeight / 2)
+     .attr('dy', '.35em')
+     .text(function(d) { return selected + ': ' + d[selected]; });
 
   // Update bar size
   tractUpdate.selectAll('rect')
-    .attr('width', function(d) { return x(d[selected]); })
     .attr('height', function(d) { return barHeight - 1; })
+    .attr('width', 0)
+    .transition().duration(1000)
+    .attr('width', function(d) { return x(d[selected]); })
 
   // Update bar with new position
   tractUpdate
     .attr('transform', function(d, i) {
       return 'translate(0,' + (barHeight * i) + ')';
     })
+
+  // EXIT
+  tractExit.remove();
 }
 
