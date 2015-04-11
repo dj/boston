@@ -51,10 +51,9 @@ function draw(rows, selected) {
   var x = d3.scale.linear()
     .domain(d3.extent(rows, function (d) { return d[selected] }))
     .range([0, width]);
-  var color = d3.scale.linear()
+  var color = d3.scale.quantile()
     .domain(d3.extent(rows, function (d) { return d[selected] }))
-    .range(['white', 'red'])
-
+    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
   var barHeight = 20;
 
   // Select the SVG and adjust height to fit data
