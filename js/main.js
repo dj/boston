@@ -48,9 +48,13 @@ function loaded(err, rows) {
 }
 
 function draw(rows, selected) {
+  var domain = d3.extent(rows, function (d) { return d[selected] })
   var x = d3.scale.linear()
-    .domain(d3.extent(rows, function (d) { return d[selected] }))
+    .domain(domain)
     .range([0, width]);
+  var color = d3.scale.linear()
+    .domain(domain)
+    .range(['white', 'red'])
 
   var barHeight = 20;
 
@@ -72,7 +76,8 @@ function draw(rows, selected) {
   // Append bars
   tractEnter
     .append('rect')
-      .style({ fill: 'rgb(50,50,50)' });
+      // .style({ fill: 'rgb(50,50,50)' });
+      .style('fill', function(d) { return color(d[selected]) } );
 
   // Append bar labels
   tractEnter
@@ -170,3 +175,4 @@ var baseLayer = L.geoJson(null, {
 
 // Load TopoJSON and add to map
 omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap);
+
