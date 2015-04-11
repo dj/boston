@@ -96,3 +96,11 @@ function draw(rows, selected) {
   tractExit.remove();
 }
 
+// Leaflet
+var map = L.map('map').setView([42.3601, -71.0589], 13);
+
+L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+	maxZoom: 16
+}).addTo(map);
+

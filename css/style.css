@@ -12,9 +12,14 @@ html, body, .container-fluid, .row, .top-tracts-container {
   background-color: #CCCCCC;
 }
 
-.sidebar,
-.content {
+.sidebar {
+  height: 100%;
   padding: 50px 10px;
+}
+
+.content {
+  height: 100%;
+  padding: 50px 0px 0;
 }
 
 /* Top Tracts */
@@ -40,3 +45,7 @@ html, body, .container-fluid, .row, .top-tracts-container {
   }
 }
 
+/* Map */
+#map {
+  height: 100%;
+}
