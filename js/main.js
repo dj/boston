@@ -58,6 +58,10 @@ function draw(rows, selected) {
   var svg = d3.select('#top-tracts')
     .attr('height', rows.length * barHeight)
 
+  // Change the map heading
+  var mapHeading = d3.select('#map-heading')
+    .html(selected)
+
   var tracts = svg.selectAll('.tract')
     .data(rows, function(d) { return d.tract })
 
@@ -73,11 +77,16 @@ function draw(rows, selected) {
   // Append bar labels
   tractEnter
    .append('text')
-     // .attr('x', function(d) { return x(d[selected]) - 3; })
-     .attr('x', function(d) { return 120; })
-     .attr('y', barHeight / 2)
-     .attr('dy', '.35em')
-     .text(function(d) { return selected + ': ' + d[selected]; });
+   .attr('class', 'bar-label')
+
+
+  // Update bar labels
+  tractUpdate
+    .selectAll('.bar-label')
+      .attr('x', function(d) { return 120; })
+      .attr('y', barHeight / 2)
+      .attr('dy', '.35em')
+      .text(function(d) { return selected + ': ' + d[selected]; });
 
   // Update bar size
   tractUpdate.selectAll('rect')
