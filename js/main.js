@@ -105,11 +105,68 @@ function draw(rows, selected) {
   tractExit.remove();
 }
 
-// Leaflet
-var map = L.map('map').setView([42.3601, -71.0589], 13);
+/*============================================================================*/
+/* LEAFLET MAP                                                                */
+/*============================================================================*/
 
+// Initialize the map
+var theMap = L.map('map').setView([42.3601, -71.0589], 13);
+
+// Initialize the tile layer and add it to the map.
 L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
 	maxZoom: 16
-}).addTo(map);
+}).addTo(theMap);
 
+// Plot Census Tracts
+// ==================
+// + Create a base layer and attach event handlers
+// + Load the census tract TopoJSON with the base layer
+
+var baseLayer = L.geoJson(null, {
+  style: function(feature) {
+    return {
+      color: '#222',
+      weight: 2,
+      dashArray: '4',
+      fill: 'red',
+      // fillColor: tractFillColor(feature.id),
+      fillOpacity: 0.5
+    };
+  },
+
+  onEachFeature: function(feature, layer) {
+    // Event handlers for the layer
+    function mouseover(e) {
+      var tract = e.target;
+
+      tract.setStyle({
+          weight: 5,
+          color: 'red',
+          dashArray: '',
+      });
+
+      if (!L.Browser.ie && !L.Browser.opera) {
+        tract.bringToFront();
+      }
+    }
+
+    function mouseout(e) {
+      baseLayer.resetStyle(e.target);
+    }
+
+    function zoomToFeature(e) {
+      theMap.fitBounds(e.target.getBounds());
+    }
+
+    // Attach the event handlers to each tract
+    layer.on({
+      mouseover: mouseover,
+      mouseout: mouseout,
+      click: zoomToFeature,
+    });
+  },
+})
+
+// Load TopoJSON and add to map
+omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap);
