@@ -1,5 +1,9 @@
 /* Full page layout */
-html, body, .container-fluid, .row, .top-tracts-container {
+html,
+body,
+.container-fluid,
+.row,
+.top-tracts-container {
   height: 100%;
 }
 
@@ -22,18 +26,6 @@ html, body, .container-fluid, .row, .top-tracts-container {
   padding: 50px 0px 0;
 }
 
-/* Top Tracts */
-#top-tracts-container {
-  background-color: #efefef;
-  overflow: scroll;
-}
-
-#top-tracts text {
-  fill: white;
-  font: 10px sans-serif;
-  text-anchor: end;
-}
-
 @media (min-width: 992px) {
   .sidebar {
     position: fixed;
@@ -43,6 +35,25 @@ html, body, .container-fluid, .row, .top-tracts-container {
     display: block;
     background-color: #CCCCCC;
   }
+}
+
+/* Top Tracts Bar Chart */
+#top-tracts-container {
+  background-color: #efefef;
+  overflow: scroll;
+}
+
+/* Top Tracts Bar Chart Legend */
+#top-tracts-legend {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+}
+
+#top-tracts text {
+  fill: black;
+  font: 12px sans-serif;
+  text-anchor: end;
 }
 
 /* Map */

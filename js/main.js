@@ -49,10 +49,10 @@ function loaded(err, rows) {
 
 function draw(rows, selected) {
   var x = d3.scale.linear()
-    .domain(d3.extent(rows, function (d) { return d[selected] }))
+    .domain([0, d3.max(rows, function (d) { return d[selected] })])
     .range([0, width]);
-  var color = d3.scale.quantile()
-    .domain(d3.extent(rows, function (d) { return d[selected] }))
+  var color = d3.scale.quantize()
+    .domain([0, d3.max(rows, function (d) { return d[selected] })])
     .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
   var barHeight = 20;
 
@@ -70,6 +70,48 @@ function draw(rows, selected) {
   var tractEnter = tracts.enter().append('g').attr('class', 'tract'),
       tractUpdate = tracts,
       tractExit = tracts.exit();
+
+  // Create the legend
+  var legendContainer = d3.select('#top-tracts-legend')
+    .attr("class", "legend")
+    .attr('transform', 'translate(10,10)')
+
+  var legend = legendContainer.selectAll('.legend')
+    .data(_.map(color.range(), function (hex, i) {
+    return {
+      key: i,
+      fill: hex,
+      x0: color.invertExtent(hex)[0],
+      x1: color.invertExtent(hex)[1]
+    }
+  }).reverse(), function(d) { return d.key })
+
+  var legendExit = legend.exit().remove(),
+      legendUpdate = legend
+      legendEnter = legend.enter()
+        .append('g')
+        .attr('class', 'legend')
+
+  legendUpdate
+    .attr('transform', function(d, i) {
+      return 'translate(0,' + i * 20 +')';
+    })
+
+  legendEnter
+    .append('rect')
+      .attr('width', 25)
+      .attr('height', 25)
+      .style('fill', function(d) { return d.fill })
+
+  legendEnter
+    .append('text')
+    .attr('class', 'legend-label');
+
+  legendUpdate.selectAll('.legend-label')
+    .text(function(d) { return Math.round(d.x0) + ' - ' + Math.round(d.x1) })
+    .attr('transform', function(d, i) {
+      return 'translate(30,15)';
+    })
 
   // Append bars
   tractEnter
