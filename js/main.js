@@ -9,16 +9,37 @@ svg.width(width);
 var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top
 svgContainer.height(svgContainerHeight - 20);
 
+// Initialize the map
+var theMap = L.map('map').setView([42.3601, -71.0589], 13);
+
+// Initialize the tile layer and add it to the map.
+L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+  maxZoom: 16
+}).addTo(theMap);
+
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
 
+// Scales
+var x = d3.scale.linear()
+  .range([0, width]);
+var color = d3.scale.quantize()
+  .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
+
+var tractsById = d3.map()
+
 // Parse the rows of the CSV, coerce strings to nums
 function parse(row) {
-  return {
+  var parsedRow = {
     tract: +row['CT_ID_10'],
     medianIncome: +row['medincome'],
     totalPop: +row['totalpop'],
-  };
+  }
+
+  tractsById.set(row['CT_ID_10'], parsedRow);
+
+  return parsedRow;
 }
 
 function loaded(err, rows) {
@@ -40,20 +61,18 @@ function loaded(err, rows) {
     var selected = $(this).find('option:selected').val();
     console.log(selected);
 
-    // TODO: do sorting in event handler before passing to draw
+    x.domain([0, d3.max(rows, function (d) { return d[selected] })])
+    color.domain([0, d3.max(rows, function (d) { return d[selected] })])
+
     var sorted = _.sortBy(rows, selected).reverse();
 
     draw(sorted, selected)
+    // Make the geojson layer, color tracts based on selected stat
+    drawMap(selected);
   })
 }
 
 function draw(rows, selected) {
-  var x = d3.scale.linear()
-    .domain([0, d3.max(rows, function (d) { return d[selected] })])
-    .range([0, width]);
-  var color = d3.scale.quantize()
-    .domain([0, d3.max(rows, function (d) { return d[selected] })])
-    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
   var barHeight = 20;
 
   // Select the SVG and adjust height to fit data
@@ -157,65 +176,68 @@ function draw(rows, selected) {
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
 
-// Initialize the map
-var theMap = L.map('map').setView([42.3601, -71.0589], 13);
 
-// Initialize the tile layer and add it to the map.
-L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-	attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
-	maxZoom: 16
-}).addTo(theMap);
+function drawMap(selected) {
+  // Plot Census Tracts
+  // ==================
+  // + Create a base layer and attach event handlers
+  // + Load the census tract TopoJSON with the base layer
 
-// Plot Census Tracts
-// ==================
-// + Create a base layer and attach event handlers
-// + Load the census tract TopoJSON with the base layer
+  var baseLayer = L.geoJson(null, {
+    style: function(feature) {
+      var fill = function(id) {
+        var tract = tractsById.get(id);
+          console.log(tract)
 
-var baseLayer = L.geoJson(null, {
-  style: function(feature) {
-    return {
-      color: '#222',
-      weight: 2,
-      dashArray: '4',
-      fill: 'red',
-      // fillColor: tractFillColor(feature.id),
-      fillOpacity: 0.5
-    };
-  },
-
-  onEachFeature: function(feature, layer) {
-    // Event handlers for the layer
-    function mouseover(e) {
-      var tract = e.target;
-
-      tract.setStyle({
-          weight: 5,
-          color: 'red',
-          dashArray: '',
-      });
-
-      if (!L.Browser.ie && !L.Browser.opera) {
-        tract.bringToFront();
+        if (tract && tract[selected]) {
+          console.log(tract[selected])
+          return color(tract[selected]);
+        } else {
+          return 'none';
+        }
       }
-    }
 
-    function mouseout(e) {
-      baseLayer.resetStyle(e.target);
-    }
+      return {
+        color: '#222',
+        weight: 0.5,
+        fillColor: fill(+feature.id),
+        fillOpacity: 0.7
+      };
+    },
 
-    function zoomToFeature(e) {
-      theMap.fitBounds(e.target.getBounds());
-    }
+    onEachFeature: function(feature, layer) {
+      // Event handlers for the layer
+      function mouseover(e) {
+        var tract = e.target;
 
-    // Attach the event handlers to each tract
-    layer.on({
-      mouseover: mouseover,
-      mouseout: mouseout,
-      click: zoomToFeature,
-    });
-  },
-})
+        tract.setStyle({
+            weight: 5,
+            color: 'red',
+            dashArray: '',
+        });
 
-// Load TopoJSON and add to map
-omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap);
+        if (!L.Browser.ie && !L.Browser.opera) {
+          tract.bringToFront();
+        }
+      }
 
+      function mouseout(e) {
+        baseLayer.resetStyle(e.target);
+      }
+
+      function zoomToFeature(e) {
+        theMap.fitBounds(e.target.getBounds());
+      }
+
+      // Attach the event handlers to each tract
+      layer.on({
+        mouseover: mouseover,
+        mouseout: mouseout,
+        click: zoomToFeature,
+      });
+    },
+  })
+
+  // Load TopoJSON and add to map
+  omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap);
+}
