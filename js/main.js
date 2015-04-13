@@ -2,13 +2,6 @@ var svg = $('#top-tracts'),
     svgContainer = $('#top-tracts-container'),
     width = svgContainer.width();
 
-// Set the svg width to the width of it's container
-svg.width(width);
-
-// Set the svg container height so that it extends to the bottom of the sidebar
-var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top
-svgContainer.height(svgContainerHeight - 20);
-
 // Initialize the map
 var theMap = L.map('map').setView([42.3601, -71.0589], 13);
 
@@ -17,6 +10,13 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Li
   attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
   maxZoom: 16
 }).addTo(theMap);
+
+// Set the svg width to the width of it's container
+svg.width(width);
+
+// Set the svg container height so that it extends to the bottom of the sidebar
+var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top
+svgContainer.height(svgContainerHeight - 20);
 
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
@@ -27,10 +27,13 @@ var x = d3.scale.linear()
 var color = d3.scale.quantize()
   .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
 
+// Keep a map of tracts that will be used
+// to look up values for the leaflet census overlay
 var tractsById = d3.map()
 
 // Parse the rows of the CSV, coerce strings to nums
 function parse(row) {
+  // Parse rows that we care about, coercing strings to nums
   var parsedRow = {
     tract: +row['CT_ID_10'],
     medianIncome: +row['medincome'],
@@ -66,13 +69,12 @@ function loaded(err, rows) {
 
     var sorted = _.sortBy(rows, selected).reverse();
 
-    draw(sorted, selected)
-    // Make the geojson layer, color tracts based on selected stat
+    drawSidebar(sorted, selected)
     drawMap(selected);
   })
 }
 
-function draw(rows, selected) {
+function drawSidebar(rows, selected) {
   var barHeight = 20;
 
   // Select the SVG and adjust height to fit data
@@ -201,20 +203,22 @@ function drawMap(selected) {
         color: '#222',
         weight: 0.5,
         fillColor: fill(+feature.id),
-        fillOpacity: 0.7
+        fillOpacity: 1.0
       };
     },
 
     onEachFeature: function(feature, layer) {
+      layer.bindPopup(feature.id)
       // Event handlers for the layer
       function mouseover(e) {
         var tract = e.target;
 
         tract.setStyle({
-            weight: 5,
-            color: 'red',
-            dashArray: '',
+            weight: 2,
+            color: 'black',
         });
+
+        layer.openPopup();
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
@@ -223,10 +227,11 @@ function drawMap(selected) {
 
       function mouseout(e) {
         baseLayer.resetStyle(e.target);
+        layer.closePopup();
       }
 
       function zoomToFeature(e) {
-        theMap.fitBounds(e.target.getBounds());
+        theMap.fitBounds(e.target.getBounds().pad(1.25));
       }
 
       // Attach the event handlers to each tract
