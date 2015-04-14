@@ -210,22 +210,26 @@ function drawMap(selected) {
     onEachFeature: function(feature, layer) {
       var tractBar = $('#'+feature.id);
 
-
       // Event handlers for the layer
       function mouseover(e) {
         var tract = e.target;
 
+        // highlight tract on map
         tract.setStyle({
             weight: 2,
             color: 'black',
         });
 
+        // hightlight tract on bar graph
         tractBar.css({
           'weight': 2,
           'stroke': 'black',
           'stroke-width': '3px',
         })
 
+        // update info box
+        $('.panel-heading').html("<h3 class='panel-title'>Census Tract: "+feature.id+"</h3>")
+        $('.panel-body').html("<p>"+tractsById.get(feature.id)[selected]+"</p>")
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();

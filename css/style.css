@@ -77,7 +77,6 @@ svg#top-tracts .focus {
 
 /* Tract Info Panel */
 #tract-info {
-  display: none;
   position: absolute;
   z-index: 100;
   margin: 1em;
