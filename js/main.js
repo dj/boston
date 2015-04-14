@@ -16,7 +16,7 @@ svg.width(width);
 
 // Set the svg container height so that it extends to the bottom of the sidebar
 var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top
-svgContainer.height(svgContainerHeight - 20);
+svgContainer.height(svgContainerHeight-10+'px');
 
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
@@ -134,15 +134,16 @@ function drawSidebar(rows, selected) {
       return 'translate(30,15)';
     })
 
-  // Append bars
+    // Append bars
   tractEnter
     .append('rect')
     .attr('class', 'bar')
+    .attr('id', function(d) { return d.tract });
 
   // Append bar labels
   tractEnter
    .append('text')
-   .attr('class', 'bar-label')
+   .attr('class', 'bar-label');
 
   // Update bar fill
   tractUpdate
@@ -172,6 +173,7 @@ function drawSidebar(rows, selected) {
 
   // EXIT
   tractExit.remove();
+
 }
 
 /*============================================================================*/
@@ -187,12 +189,10 @@ function drawMap(selected) {
 
   var baseLayer = L.geoJson(null, {
     style: function(feature) {
-      var fill = function(id) {
+      function fill(id) {
         var tract = tractsById.get(id);
-          console.log(tract)
 
         if (tract && tract[selected]) {
-          console.log(tract[selected])
           return color(tract[selected]);
         } else {
           return 'none';
@@ -208,7 +208,9 @@ function drawMap(selected) {
     },
 
     onEachFeature: function(feature, layer) {
-      layer.bindPopup(feature.id)
+      var tractBar = $('#'+feature.id);
+
+
       // Event handlers for the layer
       function mouseover(e) {
         var tract = e.target;
@@ -218,7 +220,12 @@ function drawMap(selected) {
             color: 'black',
         });
 
-        layer.openPopup();
+        tractBar.css({
+          'weight': 2,
+          'stroke': 'black',
+          'stroke-width': '3px',
+        })
+
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
@@ -226,8 +233,11 @@ function drawMap(selected) {
       }
 
       function mouseout(e) {
+        tractBar.css({
+          'stroke-width': '0',
+        })
+
         baseLayer.resetStyle(e.target);
-        layer.closePopup();
       }
 
       function zoomToFeature(e) {

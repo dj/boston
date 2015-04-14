@@ -23,7 +23,7 @@ body,
 
 .content {
   height: 100%;
-  padding: 50px 0px 0;
+  padding: 50px 0px 0px;
 }
 
 @media (min-width: 992px) {
@@ -50,13 +50,36 @@ body,
   height: 100%;
 }
 
-#top-tracts text {
+svg#top-tracts {
+  overflow: auto;
+}
+
+svg#top-tracts text {
   fill: black;
   font: 12px sans-serif;
   text-anchor: end;
 }
 
+svg#top-tracts .focus {
+  weight: 2;
+  stroke: blue;
+  stroke-width: 3px;
+  color: 'black';
+}
+
 /* Map */
 #map {
+  z-index: 99;
   height: 100%;
+  /* margin-top: 50px; */
 }
+
+
+/* Tract Info Panel */
+#tract-info {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  margin: 1em;
+}
+
