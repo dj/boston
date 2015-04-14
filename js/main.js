@@ -15,15 +15,15 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Li
 svg.width(width);
 
 // Set the svg container height so that it extends to the bottom of the sidebar
-var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top
-svgContainer.height(svgContainerHeight-10+'px');
+var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top - 10
+svgContainer.css('height', svgContainerHeight+'px');
 
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
 
 // Scales
 var x = d3.scale.linear()
-  .range([0, width]);
+  .range([0, 100]);
 var color = d3.scale.quantize()
   .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
 
@@ -67,9 +67,18 @@ function loaded(err, rows) {
     x.domain([0, d3.max(rows, function (d) { return d[selected] })])
     color.domain([0, d3.max(rows, function (d) { return d[selected] })])
 
-    var sorted = _.sortBy(rows, selected).reverse();
+    var sortedRows = _(rows)
+      .map(function(row) {
+        return {
+          tract: row.tract,
+          value: row[selected],
+        }
+      })
+      .sortBy('value')
+      .reverse()
+      .value();
 
-    drawSidebar(sorted, selected)
+    drawSidebar(sortedRows, selected)
     drawMap(selected);
   })
 }
@@ -78,19 +87,64 @@ function drawSidebar(rows, selected) {
   var barHeight = 20;
 
   // Select the SVG and adjust height to fit data
-  var svg = d3.select('#top-tracts')
+  var chart = d3.select('#top-tracts')
     .attr('height', rows.length * barHeight)
 
   // Change the map heading
   var mapHeading = d3.select('#map-heading')
     .html(selected)
 
-  var tracts = svg.selectAll('.tract')
+  var tracts = chart.selectAll('.tract')
     .data(rows, function(d) { return d.tract })
 
-  var tractEnter = tracts.enter().append('g').attr('class', 'tract'),
+  var tractEnter = tracts.enter().append('div').attr('class', 'progress'),
       tractUpdate = tracts,
       tractExit = tracts.exit();
+
+  tractEnter
+    .append('div')
+      .attr('class', 'progress-bar tract-bar')
+      .attr('role', 'progressbar')
+      .attr('id', function(d) { return d.tract })
+      .on('mouseover', function(d) {
+        d3.select(this).style('border', '3px solid blue')
+
+        theMap.eachLayer(function(layer){
+          if (d.tract == layer._tract) {
+            layer.setStyle({
+              weight: 5,
+              color: 'blue',
+            });
+          }
+        })
+
+      })
+      .on('mouseout', function(d) {
+        d3.select(this).style('border', 'none')
+
+        theMap.eachLayer(function(layer){
+          if (d.tract == layer._tract) {
+            layer.setStyle({
+              weight: 0,
+              color: 'blue',
+            });
+          }
+        })
+
+      })
+    .append('span')
+      .attr('class', 'tract-bar-label')
+
+  tractUpdate
+    .selectAll('.tract-bar ')
+      .style({
+        'width': function(d) { return x(d.value) + '%' },
+        'background-color': function(d) { return color(d.value)},
+      })
+
+  tractUpdate
+    .selectAll('.tract-bar-label')
+      .text(function(d) { return 'value: ' + d.value });
 
   // Create the legend
   var legendContainer = d3.select('#top-tracts-legend')
@@ -134,46 +188,6 @@ function drawSidebar(rows, selected) {
       return 'translate(30,15)';
     })
 
-    // Append bars
-  tractEnter
-    .append('rect')
-    .attr('class', 'bar')
-    .attr('id', function(d) { return d.tract });
-
-  // Append bar labels
-  tractEnter
-   .append('text')
-   .attr('class', 'bar-label');
-
-  // Update bar fill
-  tractUpdate
-    .selectAll('.bar')
-      .style('fill', function(d) { return color(d[selected]) } );
-
-  // Update bar labels
-  tractUpdate
-    .selectAll('.bar-label')
-      .attr('x', function(d) { return 120; })
-      .attr('y', barHeight / 2)
-      .attr('dy', '.35em')
-      .text(function(d) { return selected + ': ' + d[selected]; });
-
-  // Update bar size
-  tractUpdate.selectAll('rect')
-    .attr('height', function(d) { return barHeight - 1; })
-    .attr('width', 0)
-    .transition().duration(1000)
-    .attr('width', function(d) { return x(d[selected]); })
-
-  // Update bar with new position
-  tractUpdate
-    .attr('transform', function(d, i) {
-      return 'translate(0,' + (barHeight * i) + ')';
-    })
-
-  // EXIT
-  tractExit.remove();
-
 }
 
 /*============================================================================*/
@@ -210,6 +224,8 @@ function drawMap(selected) {
     onEachFeature: function(feature, layer) {
       var tractBar = $('#'+feature.id);
 
+      layer._tract = feature.id
+
       // Event handlers for the layer
       function mouseover(e) {
         var tract = e.target;
@@ -217,15 +233,17 @@ function drawMap(selected) {
         // highlight tract on map
         tract.setStyle({
             weight: 2,
-            color: 'black',
+            color: 'blue',
         });
 
         // hightlight tract on bar graph
         tractBar.css({
-          'weight': 2,
-          'stroke': 'black',
-          'stroke-width': '3px',
+          'border': '3px solid blue'
         })
+
+        // $('#top-tracts-container').animate({
+        //   scrollTop: tractBar.offset().top
+        // }, 500)
 
         // update info box
         $('.panel-heading').html("<h3 class='panel-title'>Census Tract: "+feature.id+"</h3>")
@@ -238,7 +256,7 @@ function drawMap(selected) {
 
       function mouseout(e) {
         tractBar.css({
-          'stroke-width': '0',
+          'border': 'none'
         })
 
         baseLayer.resetStyle(e.target);

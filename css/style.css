@@ -18,7 +18,7 @@ body,
 
 .sidebar {
   height: 100%;
-  padding: 50px 10px;
+  padding: 50px 10px 0;
 }
 
 .content {
@@ -39,8 +39,18 @@ body,
 
 /* Top Tracts Bar Chart */
 #top-tracts-container {
+  position:relative;
+  padding: 1em;
   background-color: #efefef;
   overflow: scroll;
+}
+
+.tract-bar {
+  background-image: none;
+}
+
+.progress {
+  margin: 5px;
 }
 
 /* Top Tracts Bar Chart Legend */
@@ -50,21 +60,8 @@ body,
   height: 100%;
 }
 
-svg#top-tracts {
+#top-tracts {
   overflow: auto;
-}
-
-svg#top-tracts text {
-  fill: black;
-  font: 12px sans-serif;
-  text-anchor: end;
-}
-
-svg#top-tracts .focus {
-  weight: 2;
-  stroke: blue;
-  stroke-width: 3px;
-  color: 'black';
 }
 
 /* Map */
