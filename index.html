@@ -51,9 +51,7 @@
         </div>
 
         <!-- KEY -->
-        <label for="data-type" class="control-label">Key</label>
         <div>
-          <svg id="top-tracts-legend"></svg>
         </div>
 
       </form>
@@ -73,12 +71,12 @@
       <!-- MAP CONTAINER -->
       <div id="map">
 
-        <!-- TRACT INFO PANEL -->
-        <div id="tract-info" class="panel panel-default leaflet-top leaflet-right">
-          <div class="panel-heading">Panel heading</div>
-          <div class="panel-body">
-            Panel content
-          </div>
+        <div id="color-key-container" class="panel panel-default leaflet-bottom leaflet-right">
+          <h3 id="current-tract-value" class="panel-title"></h3>
+          <p id="current-tract-id"></p>
+
+          <label class="control-label">Key</label>
+          <ul id="color-key" class="list-inline"></ul>
         </div>
 
       </div>

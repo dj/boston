@@ -3,16 +3,22 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map').setView([42.3601, -71.0589], 13);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3601, -71.0589], 13);
+new L.Control.Zoom({ position: 'topright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
 L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+  attribution: false,
   maxZoom: 16
 }).addTo(theMap);
 
 // Set the svg width to the width of it's container
 svg.width(width);
+
+L.control.attribution({
+  position: 'bottomleft',
+  prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a> Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
+}).addTo(theMap);
 
 // Set the svg container height so that it extends to the bottom of the sidebar
 var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top - 10
@@ -20,12 +26,6 @@ svgContainer.css('height', svgContainerHeight+'px');
 
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
-
-// Scales
-var x = d3.scale.linear()
-  .range([0, 100]);
-var color = d3.scale.quantize()
-  .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
 
 // Keep a map of tracts that will be used
 // to look up values for the leaflet census overlay
@@ -62,10 +62,6 @@ function loaded(err, rows) {
 
   $('#data-type').on('change', function() {
     var selected = $(this).find('option:selected').val();
-    console.log(selected);
-
-    x.domain([0, d3.max(rows, function (d) { return d[selected] })])
-    color.domain([0, d3.max(rows, function (d) { return d[selected] })])
 
     var sortedRows = _(rows)
       .map(function(row) {
@@ -78,13 +74,20 @@ function loaded(err, rows) {
       .reverse()
       .value();
 
-    drawSidebar(sortedRows, selected)
-    drawMap(selected);
+    drawSidebar(sortedRows, selected);
+    drawMap(sortedRows, selected);
   })
 }
 
 function drawSidebar(rows, selected) {
   var barHeight = 20;
+  // Scales
+  var x = d3.scale.linear()
+    .domain( [0, d3.max(rows, function (d) { return d.value } )] )
+    .range([0, 100]);
+  var color = d3.scale.quantize()
+    .domain( [0, d3.max(rows, function (d) { return d.value } )] )
+    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
 
   // Select the SVG and adjust height to fit data
   var chart = d3.select('#top-tracts')
@@ -95,9 +98,12 @@ function drawSidebar(rows, selected) {
     .html(selected)
 
   var tracts = chart.selectAll('.tract')
-    .data(rows, function(d) { return d.tract })
+    .data(rows, function(d) {
+      return d.tract
+    })
+    .sort(function(a, b) { return d3.descending(a.value, b.value) })
 
-  var tractEnter = tracts.enter().append('div').attr('class', 'progress'),
+  var tractEnter = tracts.enter().append('div').attr('class', 'tract progress'),
       tractUpdate = tracts,
       tractExit = tracts.exit();
 
@@ -136,58 +142,52 @@ function drawSidebar(rows, selected) {
       .attr('class', 'tract-bar-label')
 
   tractUpdate
-    .selectAll('.tract-bar ')
-      .style({
-        'width': function(d) { return x(d.value) + '%' },
-        'background-color': function(d) { return color(d.value)},
+    .selectAll('.tract-bar')
+      .data(rows, function(d) { return d.tract })
+      .style('width', function(d) {
+          return x(d.value) + '%';
+      })
+      .style('color', function(d) {
+        var rgb = color(d.value),
+            hsl = d3.rgb(rgb).hsl();
+
+        // Complimentary color
+        hsl['h'] = (hsl['h'] + 120) % 360;
+
+        return hsl;
+      })
+      .style('background-color', function(d) {
+        return color(d.value);
       })
 
   tractUpdate
     .selectAll('.tract-bar-label')
-      .text(function(d) { return 'value: ' + d.value });
+      .data(rows, function(d) { return d.tract })
+      .text(function(d) { return d.value });
 
-  // Create the legend
-  var legendContainer = d3.select('#top-tracts-legend')
-    .attr("class", "legend")
-    .attr('transform', 'translate(10,10)')
+  var legend = d3.select('#color-key')
 
-  var legend = legendContainer.selectAll('.legend')
-    .data(_.map(color.range(), function (hex, i) {
+  var keyData = _.map(color.range(), function(hex, i) {
     return {
       key: i,
-      fill: hex,
-      x0: color.invertExtent(hex)[0],
-      x1: color.invertExtent(hex)[1]
+      hex: hex,
+      tick: Math.round(color.invertExtent(hex)[0])
     }
-  }).reverse(), function(d) { return d.key })
+  })
 
-  var legendExit = legend.exit().remove(),
-      legendUpdate = legend
-      legendEnter = legend.enter()
-        .append('g')
-        .attr('class', 'legend')
+  var keys = legend.selectAll('.key')
+    .data(keyData, function(d) { return d.key })
 
-  legendUpdate
-    .attr('transform', function(d, i) {
-      return 'translate(0,' + i * 20 +')';
-    })
+  keys.enter().append('li')
+    .attr('class', 'key')
 
-  legendEnter
-    .append('rect')
-      .attr('width', 25)
-      .attr('height', 25)
-      .style('fill', function(d) { return d.fill })
+  keys
+    .style('border-top-color', function(d) { return d.hex })
+    .text(function(d) {
+      return d.tick
+    });
 
-  legendEnter
-    .append('text')
-    .attr('class', 'legend-label');
-
-  legendUpdate.selectAll('.legend-label')
-    .text(function(d) { return Math.round(d.x0) + ' - ' + Math.round(d.x1) })
-    .attr('transform', function(d, i) {
-      return 'translate(30,15)';
-    })
-
+  keys.exit().remove();
 }
 
 /*============================================================================*/
@@ -195,11 +195,15 @@ function drawSidebar(rows, selected) {
 /*============================================================================*/
 
 
-function drawMap(selected) {
+function drawMap(rows, selected) {
   // Plot Census Tracts
   // ==================
   // + Create a base layer and attach event handlers
   // + Load the census tract TopoJSON with the base layer
+
+  var color = d3.scale.quantize()
+    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
+    .domain( [0, d3.max(rows, function (d) { return d.value } )] )
 
   var baseLayer = L.geoJson(null, {
     style: function(feature) {
@@ -241,13 +245,9 @@ function drawMap(selected) {
           'border': '3px solid blue'
         })
 
-        // $('#top-tracts-container').animate({
-        //   scrollTop: tractBar.offset().top
-        // }, 500)
-
-        // update info box
-        $('.panel-heading').html("<h3 class='panel-title'>Census Tract: "+feature.id+"</h3>")
-        $('.panel-body').html("<p>"+tractsById.get(feature.id)[selected]+"</p>")
+        // update current tract info
+        $('#current-tract-id').text("Census Tract: "+feature.id)
+        $('#current-tract-value').text(tractsById.get(feature.id)[selected])
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
