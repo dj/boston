@@ -21,28 +21,18 @@ body,
 
 .sidebar {
   color: black;
-  height: 100%;
-  padding: 70px 15px 0;
+  height: auto;
+  padding: 70px 15px 15px;
   background-color: #efefef;
 }
 
 .content {
   height: 100%;
-  padding: 50px 0px 0px;
-}
-
-@media (min-width: 992px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    display: block;
-  }
 }
 
 /* Top Tracts Bar Chart */
 #top-tracts-container {
+  display: none;
   position:relative;
   overflow: scroll;
 }
@@ -56,14 +46,39 @@ body,
   margin: 0;
 }
 
-.tract-value {
-}
-
 .progress {
   background-image: none;
   background-color: none;
   margin-bottom: 7px;
 }
+
+@media (min-width: 992px) {
+  .sidebar {
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: block;
+  }
+
+  .content {
+    padding: 50px 0px 0px;
+  }
+
+  #top-tracts-container {
+    display: inline;
+  }
+}
+
+/* Modal Styles */
+a#about {
+  color: white;
+}
+
+/* .modal-backdrop { */
+/*   display: none; */
+/* } */
 
 /* Panel Styles */
 .panel {
