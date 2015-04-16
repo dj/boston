@@ -12,9 +12,6 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Li
   maxZoom: 16
 }).addTo(theMap);
 
-// Set the svg width to the width of it's container
-svg.width(width);
-
 L.control.attribution({
   position: 'topleft',
   prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a> Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
@@ -63,22 +60,16 @@ function parse(row) {
 function focus(id, selected) {
   var value = tractsById.get(id)[selected]
 
-  $('#current-tract-id').text("Census Tract " + id)
+  $('#current-tract-panel').show()
+  $('#current-tract-id').text('Census Tract ' + id)
   $('#current-tract-value').text(labels[selected] +" "+value)
 
-  d3.select('#tract'+id)
-        .transition()
-        .style('height', '50px')
-      .select('.tract-value')
-        .text(value)
+  $('#tract'+id+' .tract-bar').tooltip('show')
 }
 
 function focusOut(id, selected) {
-  d3.select('#tract'+id)
-    .transition()
-    .style('height', '5px')
-  .select('.tract-value')
-    .text('')
+  $('#current-tract-panel').hide()
+  $('#tract'+id+' .tract-bar').tooltip('hide')
 }
 
 function loaded(err, rows) {
@@ -178,6 +169,9 @@ function drawSidebar(rows, selected) {
   tractEnter
     .append('div')
       .attr('class', 'progress-bar tract-bar')
+      .attr('data-toggle', 'tooltip')
+      .attr('data-placement', 'right')
+      .attr('title', function(d) { return d.value })
       .attr('role', 'progressbar')
       .on('mouseover', function(d) {
 
@@ -197,6 +191,8 @@ function drawSidebar(rows, selected) {
         })
 
       })
+
+  tractEnter
     .append('span')
       .attr('class', 'tract-value')
 
@@ -287,9 +283,9 @@ function drawMap(rows, selected) {
         // highlight tract on map
         tract.setStyle(focusStyle);
 
-        $('#top-tracts-container').animate({
-          scrollTop: tractBar.offset().top
-        })
+        // $('#top-tracts-container').animate({
+        //   scrollTop: tractBar.offset().top
+        // })
 
         focus(feature.id, selected);
 
