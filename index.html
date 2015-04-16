@@ -25,7 +25,8 @@
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">Boston Census Map</a>
+      <a class="navbar-brand" href="#">The City of Boston</a>
+      <p class="navbar-text">2010 Census</p>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
     </div><!--/.navbar-collapse -->
@@ -42,10 +43,9 @@
       <!-- FORM CONTROLS -->
       <form>
 
-        <h1 id="map-heading">Map</h1>
         <!-- DATA TYPE SELECT -->
         <div class="form-group">
-          <label for="data-type" class="control-label">Data Type</label>
+          <label for="data-type" class="control-label">Map Type</label>
           <select class="selectpicker form-control" id="data-type">
           </select>
         </div>
@@ -57,7 +57,6 @@
       </form>
 
       <!-- TOP TRACTS -->
-      <h1>Tracts</h1>
       <div id="top-tracts-container">
         <div id="top-tracts">
         </div>
@@ -71,11 +70,13 @@
       <!-- MAP CONTAINER -->
       <div id="map">
 
-        <div id="color-key-container" class="panel panel-default leaflet-bottom leaflet-right">
+        <div class="panel panel-default leaflet-bottom leaflet-left">
           <h3 id="current-tract-value" class="panel-title"></h3>
           <p id="current-tract-id"></p>
+        </div>
 
-          <label class="control-label">Key</label>
+        <div id="color-key-container" class="panel panel-default leaflet-bottom leaflet-right">
+          <label id="map-heading" class="control-label"></label>
           <ul id="color-key" class="list-inline"></ul>
         </div>
 

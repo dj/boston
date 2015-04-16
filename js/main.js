@@ -16,7 +16,7 @@ L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Li
 svg.width(width);
 
 L.control.attribution({
-  position: 'bottomleft',
+  position: 'topleft',
   prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a> Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
 }).addTo(theMap);
 

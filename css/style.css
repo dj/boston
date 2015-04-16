@@ -11,14 +11,19 @@ body,
   border-radius: 0;
   z-index: 1000;
 }
+.navbar-inverse {
+  background-image: none;
+}
 
-.sidebar {
-  background-color: #CCCCCC;
+.navbar-inverse .navbar-brand {
+  color: white;
 }
 
 .sidebar {
+  color: white;
   height: 100%;
-  padding: 50px 10px 0;
+  padding: 70px 15px 0;
+  background-color: #222;
 }
 
 .content {
@@ -33,7 +38,6 @@ body,
     left: 0;
     bottom: 0;
     display: block;
-    background-color: #CCCCCC;
   }
 }
 
@@ -41,8 +45,11 @@ body,
 #top-tracts-container {
   position:relative;
   padding: 1em;
-  background-color: #efefef;
   overflow: scroll;
+}
+
+.tract {
+  height: 5px;
 }
 
 .tract-bar {
@@ -50,23 +57,28 @@ body,
   margin: 0;
 }
 
+.tract-value {
+  padding: 5px;
+  font-size: 25px;
+  line-height: 50px;
+}
+
 .progress {
-  margin-bottom: 10px;
+  background-image: none;
+  background-color: none;
+  margin-bottom: 7px;
 }
 
-.tract-bar-label {
-  float: left;
-  padding-left: 1em;
-}
-
-/* Legend Styles */
-#color-key-container {
+/* Panel Styles */
+.panel {
+  background-color: ghostwhite;
   margin: 1em;
   padding: 1em;
+  width: 300px;
 }
 
 #color-key {
-  width: 300px;
+  width: 500px;
 }
 
 li.key {
@@ -82,7 +94,6 @@ li.key {
 #map {
   z-index: 99;
   height: 100%;
-  /* margin-top: 50px; */
 }
 
 
