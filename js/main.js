@@ -271,7 +271,7 @@ function drawMap(rows, selected) {
         color: '#222',
         weight: 0.5,
         fillColor: fill(+feature.id),
-        fillOpacity: 1.0
+        fillOpacity: 0.6
       };
     },
 
