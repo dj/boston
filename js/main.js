@@ -3,7 +3,7 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3601, -71.0589], 13);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0589], 12);
 new L.Control.Zoom({ position: 'topright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
@@ -23,6 +23,20 @@ L.control.attribution({
 // Set the svg container height so that it extends to the bottom of the sidebar
 var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top - 10
 svgContainer.css('height', svgContainerHeight+'px');
+
+var labels = {
+  medianIncome: 'Median Income',
+  totalPop: 'Total Population'
+}
+
+var focusStyle = {
+  weight: 5,
+  color: 'black'
+}
+
+var focusOffStyle = {
+  weight: 0
+}
 
 // Load the data
 d3.csv('data/boston-census-2010.csv', parse, loaded);
@@ -45,9 +59,31 @@ function parse(row) {
   return parsedRow;
 }
 
+// update current tract info
+function focus(id, selected) {
+  var value = tractsById.get(id)[selected]
+
+  $('#current-tract-id').text("Census Tract " + id)
+  $('#current-tract-value').text(labels[selected] +" "+value)
+
+  d3.select('#tract'+id)
+        .transition()
+        .style('height', '50px')
+      .select('.tract-value')
+        .text(value)
+}
+
+function focusOut(id, selected) {
+  d3.select('#tract'+id)
+    .transition()
+    .style('height', '5px')
+  .select('.tract-value')
+    .text('')
+}
+
 function loaded(err, rows) {
   // Populate the data type dropdown
-  var optionsList = Object.keys(rows[0]),
+  var optionsList = _.without(Object.keys(rows[0]), 'tract'),
       select = d3.select('#data-type')
 
       select
@@ -55,15 +91,13 @@ function loaded(err, rows) {
         .data(optionsList).enter()
         .append('option')
         .attr('value', function(d) {return d})
-        .text(function(d) {return d});
+        .text(function(d) {return labels[d]});
 
   // Refresh select options
   $('.selectpicker').selectpicker('refresh');
 
-  $('#data-type').on('change', function() {
-    var selected = $(this).find('option:selected').val();
-
-    var sortedRows = _(rows)
+  function parseRows(rows, selected) {
+    return _(rows)
       .map(function(row) {
         return {
           tract: row.tract,
@@ -73,10 +107,23 @@ function loaded(err, rows) {
       .sortBy('value')
       .reverse()
       .value();
+  }
 
-    drawSidebar(sortedRows, selected);
-    drawMap(sortedRows, selected);
+  $('#data-type').on('change', function() {
+    var selected = $(this).find('option:selected').val();
+
+    var sorted = parseRows(rows, selected);
+
+    drawSidebar(sorted, selected);
+    drawMap(sorted, selected);
   })
+
+  // Initial View
+  var initStat = 'medianIncome',
+      sorted = parseRows(rows, initStat);
+
+  drawSidebar(sorted, initStat);
+  drawMap(sorted, initStat);
 }
 
 function drawSidebar(rows, selected) {
@@ -87,7 +134,12 @@ function drawSidebar(rows, selected) {
     .range([0, 100]);
   var color = d3.scale.quantize()
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
-    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
+    .range([
+      '#ca0020',
+      '#f4a582',
+      '#92c5de',
+      '#0571b0'
+    ])
 
   // Select the SVG and adjust height to fit data
   var chart = d3.select('#top-tracts')
@@ -95,7 +147,7 @@ function drawSidebar(rows, selected) {
 
   // Change the map heading
   var mapHeading = d3.select('#map-heading')
-    .html(selected)
+    .html(labels[selected])
 
   var tracts = chart.selectAll('.tract')
     .data(rows, function(d) {
@@ -103,43 +155,50 @@ function drawSidebar(rows, selected) {
     })
     .sort(function(a, b) { return d3.descending(a.value, b.value) })
 
-  var tractEnter = tracts.enter().append('div').attr('class', 'tract progress'),
+  var tractEnter = tracts
+        .enter()
+          .append('div')
+          .attr('class', 'tract')
+          .attr('id', function(d) { return 'tract'+d.tract }),
       tractUpdate = tracts,
       tractExit = tracts.exit();
+
+  tractUpdate
+    .selectAll('.tract-value')
+      .data(rows, function (d) { return d.tract })
+
+  tractEnter
+    .on('mouseover', function(d) {
+      focus(d.tract, selected);
+    })
+    .on('mouseout', function(d) {
+      focusOut(d.tract, selected);
+    })
 
   tractEnter
     .append('div')
       .attr('class', 'progress-bar tract-bar')
       .attr('role', 'progressbar')
-      .attr('id', function(d) { return d.tract })
       .on('mouseover', function(d) {
-        d3.select(this).style('border', '3px solid blue')
 
         theMap.eachLayer(function(layer){
           if (d.tract == layer._tract) {
-            layer.setStyle({
-              weight: 5,
-              color: 'blue',
-            });
+            layer.setStyle(focusStyle);
           }
         })
 
       })
       .on('mouseout', function(d) {
-        d3.select(this).style('border', 'none')
 
         theMap.eachLayer(function(layer){
           if (d.tract == layer._tract) {
-            layer.setStyle({
-              weight: 0,
-              color: 'blue',
-            });
+            layer.setStyle(focusOffStyle);
           }
         })
 
       })
     .append('span')
-      .attr('class', 'tract-bar-label')
+      .attr('class', 'tract-value')
 
   tractUpdate
     .selectAll('.tract-bar')
@@ -147,23 +206,9 @@ function drawSidebar(rows, selected) {
       .style('width', function(d) {
           return x(d.value) + '%';
       })
-      .style('color', function(d) {
-        var rgb = color(d.value),
-            hsl = d3.rgb(rgb).hsl();
-
-        // Complimentary color
-        hsl['h'] = (hsl['h'] + 120) % 360;
-
-        return hsl;
-      })
       .style('background-color', function(d) {
         return color(d.value);
       })
-
-  tractUpdate
-    .selectAll('.tract-bar-label')
-      .data(rows, function(d) { return d.tract })
-      .text(function(d) { return d.value });
 
   var legend = d3.select('#color-key')
 
@@ -202,7 +247,12 @@ function drawMap(rows, selected) {
   // + Load the census tract TopoJSON with the base layer
 
   var color = d3.scale.quantize()
-    .range(['#fef0d9', '#fdd49e', '#fdbb84', '#fc8d59', '#ef6548', '#d7301f', '#990000'])
+    .range([
+      '#ca0020',
+      '#f4a582',
+      '#92c5de',
+      '#0571b0'
+    ])
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
 
   var baseLayer = L.geoJson(null, {
@@ -226,7 +276,7 @@ function drawMap(rows, selected) {
     },
 
     onEachFeature: function(feature, layer) {
-      var tractBar = $('#'+feature.id);
+      var tractBar = $('#tract'+feature.id);
 
       layer._tract = feature.id
 
@@ -235,19 +285,13 @@ function drawMap(rows, selected) {
         var tract = e.target;
 
         // highlight tract on map
-        tract.setStyle({
-            weight: 2,
-            color: 'blue',
-        });
+        tract.setStyle(focusStyle);
 
-        // hightlight tract on bar graph
-        tractBar.css({
-          'border': '3px solid blue'
+        $('#top-tracts-container').animate({
+          scrollTop: tractBar.offset().top
         })
 
-        // update current tract info
-        $('#current-tract-id').text("Census Tract: "+feature.id)
-        $('#current-tract-value').text(tractsById.get(feature.id)[selected])
+        focus(feature.id, selected);
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
@@ -255,10 +299,9 @@ function drawMap(rows, selected) {
       }
 
       function mouseout(e) {
-        tractBar.css({
-          'border': 'none'
-        })
+        var tractBar = $('#'+feature.id);
 
+        focusOut(feature.id, selected);
         baseLayer.resetStyle(e.target);
       }
 
