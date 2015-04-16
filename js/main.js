@@ -23,7 +23,8 @@ svgContainer.css('height', svgContainerHeight+'px');
 
 var labels = {
   medianIncome: 'Median Income',
-  totalPop: 'Total Population'
+  totalPop: 'Total Population',
+  unemployed: '% Unemployed'
 }
 
 var focusStyle = {
@@ -49,6 +50,7 @@ function parse(row) {
     tract: +row['CT_ID_10'],
     medianIncome: +row['medincome'],
     totalPop: +row['totalpop'],
+    unemployed: +row['punemploy']
   }
 
   tractsById.set(row['CT_ID_10'], parsedRow);
@@ -64,7 +66,10 @@ function focus(id, selected) {
   $('#current-tract-id').text('Census Tract ' + id)
   $('#current-tract-value').text(labels[selected] +" "+value)
 
-  $('#tract'+id+' .tract-bar').tooltip('show')
+  $('#tract'+id+' .tract-bar')
+    .attr('data-original-title', value)
+    .tooltip('fixTitle')
+    .tooltip('show')
 }
 
 function focusOut(id, selected) {
@@ -125,11 +130,19 @@ function drawSidebar(rows, selected) {
     .range([0, 100]);
   var color = d3.scale.quantize()
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
+    // .range([
+    //   '#ca0020',
+    //   '#f4a582',
+    //   '#92c5de',
+    //   '#0571b0'
+    // ])
     .range([
-      '#ca0020',
-      '#f4a582',
-      '#92c5de',
-      '#0571b0'
+      '#b2182b',
+      '#ef8a62',
+      '#fddbc7',
+      '#d1e5f0',
+      '#67a9cf',
+      '#2166ac'
     ])
 
   // Select the SVG and adjust height to fit data
@@ -158,7 +171,7 @@ function drawSidebar(rows, selected) {
     .selectAll('.tract-value')
       .data(rows, function (d) { return d.tract })
 
-  tractEnter
+  tractUpdate
     .on('mouseover', function(d) {
       focus(d.tract, selected);
     })
@@ -171,8 +184,8 @@ function drawSidebar(rows, selected) {
       .attr('class', 'progress-bar tract-bar')
       .attr('data-toggle', 'tooltip')
       .attr('data-placement', 'right')
-      .attr('title', function(d) { return d.value })
       .attr('role', 'progressbar')
+      .attr('title', function(d) { return d.value })
       .on('mouseover', function(d) {
 
         theMap.eachLayer(function(layer){
@@ -192,12 +205,8 @@ function drawSidebar(rows, selected) {
 
       })
 
-  tractEnter
-    .append('span')
-      .attr('class', 'tract-value')
-
   tractUpdate
-    .selectAll('.tract-bar')
+    .selectAll('.progress-bar')
       .data(rows, function(d) { return d.tract })
       .style('width', function(d) {
           return x(d.value) + '%';
@@ -243,11 +252,19 @@ function drawMap(rows, selected) {
   // + Load the census tract TopoJSON with the base layer
 
   var color = d3.scale.quantize()
+    // .range([
+    //   '#ca0020',
+    //   '#f4a582',
+    //   '#92c5de',
+    //   '#0571b0'
+    // ])
     .range([
-      '#ca0020',
-      '#f4a582',
-      '#92c5de',
-      '#0571b0'
+      '#b2182b',
+      '#ef8a62',
+      '#fddbc7',
+      '#d1e5f0',
+      '#67a9cf',
+      '#2166ac'
     ])
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
 
