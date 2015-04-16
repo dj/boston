@@ -24,7 +24,8 @@ svgContainer.css('height', svgContainerHeight+'px');
 var labels = {
   medianIncome: 'Median Income',
   totalPop: 'Total Population',
-  unemployed: '% Unemployed'
+  unemployed: '% Unemployed',
+  medianGrossRent: 'Median Gross Rent'
 }
 
 var focusStyle = {
@@ -50,7 +51,8 @@ function parse(row) {
     tract: +row['CT_ID_10'],
     medianIncome: +row['medincome'],
     totalPop: +row['totalpop'],
-    unemployed: +row['punemploy']
+    unemployed: +row['punemploy'],
+    medianGrossRent: +row['grossrent']
   }
 
   tractsById.set(row['CT_ID_10'], parsedRow);
