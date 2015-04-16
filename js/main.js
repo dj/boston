@@ -283,8 +283,8 @@ function drawMap(rows, selected) {
       }
 
       return {
-        color: '#222',
-        weight: 0.5,
+        color: 'none',
+        weight: 0,
         fillColor: fill(+feature.id),
         fillOpacity: 0.6
       };
@@ -292,6 +292,13 @@ function drawMap(rows, selected) {
 
     onEachFeature: function(feature, layer) {
       var tractBar = $('#tract'+feature.id);
+
+      // We have more features than we have data,
+      // so don't attach events for features without
+      // a matching tract bar.
+      if (!tractBar[0]) {
+        return;
+      }
 
       layer._tract = feature.id
 
