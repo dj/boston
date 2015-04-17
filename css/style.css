@@ -67,7 +67,7 @@ body,
   }
 
   #top-tracts-container {
-    display: inline;
+    display: block;
   }
 }
 
@@ -75,10 +75,6 @@ body,
 a#about {
   color: white;
 }
-
-/* .modal-backdrop { */
-/*   display: none; */
-/* } */
 
 /* Panel Styles */
 .panel {
