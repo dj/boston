@@ -22,16 +22,22 @@
 
 <body>
 <!--[if lt IE 8]><p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p><![endif]-->
-<!-- ABOUT MODAL -->
+<!--
+ABOUT MODAL
+===========
+Don't nest it or BAD THINGS will happen
+-->
+
 <div id="about-modal" class="modal">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">About</h4>
+        <h2 class="modal-title">Boston Census Map</h2>
       </div>
       <div class="modal-body">
-        <p>One fine body&hellip;</p>
+        <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+        <p>Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.</p>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -47,8 +53,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">The City of Boston</a>
-      <p class="navbar-text">2010 Census</p>
+      <a class="navbar-brand" href="#">Boston Census Map</a>
+      <p class="navbar-text">2010</p>
     </div>
 
     <div class="navbar-collapse collapse">
