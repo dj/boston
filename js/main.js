@@ -44,9 +44,8 @@ d3.csv('data/boston-census-2010.csv', parse, censusLoaded);
 // Draw neighborhoods
 function neighborhoodsLoaded(err, data) {
   var style = {
-    color: 'black',
+    color: 'none',
     fillColor: 'none',
-    weight: 0,
   }
 
   function onEachFeature(feature, layer) {
@@ -91,19 +90,21 @@ function parse(row) {
 function focus(id, selected) {
   var value = tractsById.get(id)[selected]
 
+  $('#tract'+id+' .tract-bar')
+    .addClass('focus')
+    // .tooltip('hide')
+    // .attr('data-original-title', value)
+    // .tooltip('fixTitle')
+    // .tooltip('show')
+
   $('#current-tract-panel').show()
   $('#current-tract-id').text('Census Tract ' + id)
   $('#current-tract-value').text(labels[selected] +" "+value)
-
-  $('#tract'+id+' .tract-bar')
-    .attr('data-original-title', value)
-    .tooltip('fixTitle')
-    .tooltip('show')
 }
 
 function focusOut(id, selected) {
   $('#current-tract-panel').hide()
-  $('#tract'+id+' .tract-bar').tooltip('hide')
+  $('#tract'+id+' .tract-bar').removeClass('focus').tooltip('hide')
 }
 
 function censusLoaded(err, rows) {
@@ -159,20 +160,7 @@ function drawSidebar(rows, selected) {
     .range([0, 100]);
   var color = d3.scale.quantize()
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
-    // .range([
-    //   '#ca0020',
-    //   '#f4a582',
-    //   '#92c5de',
-    //   '#0571b0'
-    // ])
-    .range([
-      '#b2182b',
-      '#ef8a62',
-      '#fddbc7',
-      '#d1e5f0',
-      '#67a9cf',
-      '#2166ac'
-    ])
+    .range(['#b2182b', '#ef8a62', '#fddbc7', '#d1e5f0', '#67a9cf', '#2166ac'])
 
   // Select the SVG and adjust height to fit data
   var chart = d3.select('#top-tracts')
@@ -279,20 +267,7 @@ function drawMap(rows, selected) {
   // + Load the census tract TopoJSON with the base layer
 
   var color = d3.scale.quantize()
-    // .range([
-    //   '#ca0020',
-    //   '#f4a582',
-    //   '#92c5de',
-    //   '#0571b0'
-    // ])
-    .range([
-      '#b2182b',
-      '#ef8a62',
-      '#fddbc7',
-      '#d1e5f0',
-      '#67a9cf',
-      '#2166ac'
-    ])
+    .range(['#b2182b', '#ef8a62', '#fddbc7', '#d1e5f0', '#67a9cf', '#2166ac'])
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
 
   var baseLayer = L.geoJson(null, {
@@ -334,9 +309,7 @@ function drawMap(rows, selected) {
         // highlight tract on map
         tract.setStyle(focusStyle);
 
-        // $('#top-tracts-container').animate({
-        //   scrollTop: tractBar.offset().top
-        // })
+        var tractId = '#tract' + feature.id
 
         focus(feature.id, selected);
 
@@ -352,15 +325,10 @@ function drawMap(rows, selected) {
         baseLayer.resetStyle(e.target);
       }
 
-      function zoomToFeature(e) {
-        theMap.fitBounds(e.target.getBounds().pad(1.25));
-      }
-
       // Attach the event handlers to each tract
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        click: zoomToFeature,
       });
     },
   })
