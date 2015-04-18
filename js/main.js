@@ -3,7 +3,7 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0589], 12);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12.5);
 new L.Control.Zoom({ position: 'topright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
@@ -38,7 +38,34 @@ var focusOffStyle = {
 }
 
 // Load the data
-d3.csv('data/boston-census-2010.csv', parse, loaded);
+d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
+d3.csv('data/boston-census-2010.csv', parse, censusLoaded);
+
+// Draw neighborhoods
+function neighborhoodsLoaded(err, data) {
+  var style = {
+    color: 'black',
+    fillColor: 'none',
+    weight: 0,
+  }
+
+  function onEachFeature(feature, layer) {
+    var center = layer.getBounds().getCenter();
+
+    L.marker([center.lat, center.lng], {
+        icon: L.divIcon({
+            className: 'text-labels',
+            html: feature.properties.Name
+        }),
+        zIndexOffset: 1000
+    }).addTo(theMap);
+  }
+
+  L.geoJson(data, {
+    style: style,
+    onEachFeature: onEachFeature,
+  }).addTo(theMap);
+}
 
 // Keep a map of tracts that will be used
 // to look up values for the leaflet census overlay
@@ -79,7 +106,7 @@ function focusOut(id, selected) {
   $('#tract'+id+' .tract-bar').tooltip('hide')
 }
 
-function loaded(err, rows) {
+function censusLoaded(err, rows) {
   // Populate the data type dropdown
   var optionsList = _.without(Object.keys(rows[0]), 'tract'),
       select = d3.select('#data-type')
@@ -245,8 +272,6 @@ function drawSidebar(rows, selected) {
 /*============================================================================*/
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
-
-
 function drawMap(rows, selected) {
   // Plot Census Tracts
   // ==================
@@ -341,5 +366,6 @@ function drawMap(rows, selected) {
   })
 
   // Load TopoJSON and add to map
-  omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap);
+  omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap)
 }
+
