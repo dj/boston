@@ -1,3 +1,6 @@
+// Show the about / welcome modal
+$('#about-modal').modal('show').addClass('fade');
+
 var svg = $('#top-tracts'),
     svgContainer = $('#top-tracts-container'),
     width = svgContainer.width();
