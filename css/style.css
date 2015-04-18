@@ -22,7 +22,7 @@ body,
 .sidebar {
   color: black;
   height: auto;
-  padding: 70px 15px 15px;
+  padding: 60px 15px 15px;
   background-color: #efefef;
 }
 
@@ -38,7 +38,7 @@ body,
 }
 
 .tract {
-  height: 5px;
+  height: 2.75px;
 }
 
 .tract-bar {
@@ -50,6 +50,10 @@ body,
   background-image: none;
   background-color: none;
   margin-bottom: 7px;
+}
+
+.focus {
+  background-color: black !important;
 }
 
 @media (min-width: 992px) {
@@ -102,13 +106,14 @@ li.key {
   z-index: 99;
   height: 100%;
 }
+
 .leaflet-marker-pane {
   background: none;
   pointer-events:none;
 }
 
 .text-labels {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   pointer-events: none;
 }
