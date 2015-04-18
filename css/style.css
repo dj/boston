@@ -102,6 +102,16 @@ li.key {
   z-index: 99;
   height: 100%;
 }
+.leaflet-marker-pane {
+  background: none;
+  pointer-events:none;
+}
+
+.text-labels {
+  font-size: 10px;
+  font-weight: 700;
+  pointer-events: none;
+}
 
 
 /* Tract Info Panel */
