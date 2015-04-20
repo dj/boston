@@ -40,7 +40,7 @@ var formats = {
 }
 
 var focusStyle = {
-  weight: 5,
+  weight: 0.5,
   color: 'black'
 }
 
@@ -101,10 +101,16 @@ function focus(id, selected) {
 
   $('#tract'+id+' .tract-bar')
     .addClass('focus')
-      .tooltip('hide')
-      .attr('data-original-title', value)
-      .tooltip('fixTitle')
-      .tooltip('show')
+
+  $('#tract'+id+' .tract-bar')
+    .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
+    .tooltip('hide')
+
+  $('#tract'+id+' .tract-bar')
+    .attr('data-original-title', value)
+    .tooltip('fixTitle')
+    .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
+    .tooltip('toggle')
 
   $('#current-tract-panel').show()
   $('#current-tract-id').text('Census Tract ' + id)
@@ -113,7 +119,11 @@ function focus(id, selected) {
 
 function focusOut(id, selected) {
   $('#current-tract-panel').hide()
-  $('#tract'+id+' .tract-bar').removeClass('focus').tooltip('hide')
+  $('#tract'+id+' .tract-bar').removeClass('focus')
+
+  $('#tract'+id+' .tract-bar')
+    .tooltip({ delay: 0, placement: 'bottom', trigger: 'manual'})
+    .tooltip('toggle')
 }
 
 function censusLoaded(err, rows) {
@@ -212,10 +222,10 @@ function drawSidebar(rows, selected, color) {
       .data(rows, function (d) { return d.tract })
 
   tractUpdate
-    .on('mouseover', function(d) {
+    .on('mouseenter', function(d) {
       focus(d.tract, selected);
     })
-    .on('mouseout', function(d) {
+    .on('mouseleave', function(d) {
       focusOut(d.tract, selected);
     })
 
@@ -226,7 +236,7 @@ function drawSidebar(rows, selected, color) {
       .attr('role', 'progressbar')
       .attr('title', function(d) { return d.value })
       .attr('alt', function(d) { return d.value })
-      .on('mouseover', function(d) {
+      .on('mouseenter', function(d) {
 
         theMap.eachLayer(function(layer){
           if (d.tract == layer._tract) {
@@ -235,7 +245,7 @@ function drawSidebar(rows, selected, color) {
         })
 
       })
-      .on('mouseout', function(d) {
+      .on('mouseleave', function(d) {
 
         theMap.eachLayer(function(layer){
           if (d.tract == layer._tract) {
