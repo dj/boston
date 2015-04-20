@@ -99,6 +99,11 @@ function parse(row) {
 function focus(id, selected) {
   var value = tractsById.get(id)[selected]
 
+  // Return if there is no value to show
+  if (!value) {
+    return;
+  }
+
   $('#tract'+id+' .tract-bar')
     .addClass('focus')
 
@@ -113,8 +118,8 @@ function focus(id, selected) {
     .tooltip('toggle')
 
   $('#current-tract-panel').show()
-  $('#current-tract-id').text('Census Tract ' + id)
   $('#current-tract-value').text(formats[selected](value)+' '+labels[selected])
+  $('#current-tract-id').text('Census Tract ' + id)
 }
 
 function focusOut(id, selected) {
@@ -307,14 +312,14 @@ function drawMap(rows, selected, color) {
         if (tract && tract[selected]) {
           return color(tract[selected]);
         } else {
-          return 'none';
+          return 'grey';
         }
       }
 
       return {
-        color: 'none',
-        weight: 0,
+        fillColor: 'grey',
         fillColor: fill(+feature.id),
+        weight: 0,
         fillOpacity: 1
       };
     },
