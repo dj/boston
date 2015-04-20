@@ -37,6 +37,11 @@ body,
   overflow: scroll;
 }
 
+#top-tracts {
+  margin-right: 4em;
+  overflow: visible;
+}
+
 .tract {
   height: 3.25px;
 }
