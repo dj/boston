@@ -34,6 +34,11 @@ var middles = {
   punemployed: 0.072, // % unemployment Boston Dec 2010
 }
 
+// var middles = {
+//   prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
+//   punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'}
+// }
+
 var formats = {
   prentocc: d3.format('.0%'),
   punemployed: d3.format('.0%')
@@ -160,14 +165,19 @@ function censusLoaded(err, rows) {
       .value();
   }
 
+  // Change map type
   $('#data-type').on('change', function() {
     var selected = $(this).find('option:selected').val();
 
     var sorted = parseRows(rows, selected);
 
     var color = d3.scale.linear()
-      .domain( [d3.min(sorted, function(d) { return d.value }), middles[selected], d3.max(sorted, function (d) { return d.value } )] )
-      .range(['#b2182b', '#efefef', '#2166ac'])
+      .domain([
+        d3.min(sorted, function(d) { return d.value }),
+        middles[selected],
+        d3.max(sorted, function (d) { return d.value } )
+      ])
+      .range(['#b2182b', '#f7f7f7', '#2166ac'])
 
     drawSidebar(sorted, selected, color);
     drawMap(sorted, selected, color);
@@ -317,15 +327,14 @@ function drawMap(rows, selected, color) {
       }
 
       return {
-        fillColor: 'grey',
-        fillColor: fill(+feature.id),
+        fillColor: fill(feature.properties.GEOID10),
         weight: 0,
         fillOpacity: 1
       };
     },
 
     onEachFeature: function(feature, layer) {
-      var tractBar = $('#tract'+feature.id);
+      var tractBar = $('#tract'+feature.properties.GEOID10);
 
       // We have more features than we have data,
       // so don't attach events for features without
@@ -334,7 +343,7 @@ function drawMap(rows, selected, color) {
         return;
       }
 
-      layer._tract = feature.id
+      layer._tract = feature.properties.GEOID10
 
       // Event handlers for the layer
       function mouseover(e) {
@@ -343,9 +352,9 @@ function drawMap(rows, selected, color) {
         // highlight tract on map
         tract.setStyle(focusStyle);
 
-        var tractId = '#tract' + feature.id
+        var tractId = '#tract' + feature.properties.GEOID10
 
-        focus(feature.id, selected);
+        focus(feature.properties.GEOID10, selected);
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
@@ -353,9 +362,9 @@ function drawMap(rows, selected, color) {
       }
 
       function mouseout(e) {
-        var tractBar = $('#'+feature.id);
+        var tractBar = $('#'+feature.properties.GEOID10);
 
-        focusOut(feature.id, selected);
+        focusOut(feature.properties.GEOID10, selected);
         baseLayer.resetStyle(e.target);
       }
 
@@ -368,6 +377,6 @@ function drawMap(rows, selected, color) {
   })
 
   // Load TopoJSON and add to map
-  omnivore.topojson('data/tracts2010.json', {}, baseLayer).addTo(theMap)
+  omnivore.topojson('data/tracts2010topo.json', {}, baseLayer).addTo(theMap)
 }
 
