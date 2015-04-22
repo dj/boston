@@ -7,6 +7,10 @@ body,
   height: 100%;
 }
 
+body {
+  overflow: hidden;
+}
+
 .navbar {
   border-radius: 0;
   z-index: 1000;
@@ -27,6 +31,8 @@ body,
 }
 
 .content {
+  position: relative;
+  padding: 0;
   height: 100%;
 }
 
@@ -85,14 +91,6 @@ a#about {
   color: white;
 }
 
-/* Panel Styles */
-.panel {
-  background-color: ghostwhite;
-  margin: 1em;
-  padding: 1em;
-  width: 300px;
-}
-
 #color-key {
   width: 340px;
 }
@@ -125,9 +123,12 @@ li.key {
 
 
 /* Tract Info Panel */
-#tract-info {
-  position: absolute;
-  z-index: 100;
+#current-tract-panel {
+  position: fixed;
+  z-index: 1000;
+  background-color: ghostwhite;
   margin: 1em;
+  padding: 1em;
+  max-width: 300px;
 }
 
