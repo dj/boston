@@ -29,15 +29,15 @@ var labels = {
   prentocc: 'Renter Occupied'
 }
 
-var middles = {
-  prentocc: 0.661, // % renter occupied units in Boston 2010
-  punemployed: 0.072, // % unemployment Boston Dec 2010
-}
-
 // var middles = {
-//   prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
-//   punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'}
+//   prentocc: 0.661, // % renter occupied units in Boston 2010
+//   punemployed: 0.072, // % unemployment Boston Dec 2010
 // }
+
+var middles = {
+  prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
+  punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'}
+}
 
 var formats = {
   prentocc: d3.format('.0%'),
@@ -112,19 +112,10 @@ function focus(id, selected) {
   $('#tract'+id+' .tract-bar')
     .addClass('focus')
 
-  // $('#tract'+id+' .tract-bar')
-  //   .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
-  //   .tooltip('hide')
-
-  // $('#tract'+id+' .tract-bar')
-  //   .attr('data-original-title', value)
-  //   .tooltip('fixTitle')
-  //   .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
-  //   .tooltip('toggle')
-
   $('#current-tract-panel').show()
   $('#current-tract-value').text(formats[selected](value)+' '+labels[selected])
   $('#current-tract-id').text('Census Tract ' + id)
+  $('#current-middle').text(middles[selected].val + middles[selected].label)
 }
 
 function focusOut(id, selected) {
@@ -174,7 +165,7 @@ function censusLoaded(err, rows) {
     var color = d3.scale.linear()
       .domain([
         d3.min(sorted, function(d) { return d.value }),
-        middles[selected],
+        middles[selected].val,
         d3.max(sorted, function (d) { return d.value } )
       ])
       .range(['#b2182b', '#f7f7f7', '#2166ac'])
@@ -189,7 +180,7 @@ function censusLoaded(err, rows) {
       color = d3.scale.linear()
                 .domain([
                   d3.min(sorted, function(d) { return d.value }),
-                  middles[initSelected],
+                  middles[initSelected].val,
                   d3.max(sorted, function (d) { return d.value })
                 ])
                 .range(['#b2182b', '#efefef', '#2166ac'])
