@@ -36,7 +36,34 @@ body {
   height: 100%;
 }
 
+/* Map */
+#map {
+  z-index: 99;
+  height: 100%;
+}
+
+
+/* Hide this because it breaks the layout in mobile right now */
+.leaflet-control-zoom {
+  display: none;
+}
+
+.leaflet-marker-pane {
+  background: none;
+  pointer-events:none;
+}
+
+.text-labels {
+  font-size: 10px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
 /* Top Tracts Bar Chart */
+p#description {
+  font-size: .9em;
+}
+
 #top-tracts-container {
   display: none;
   position:relative;
@@ -49,7 +76,7 @@ body {
 }
 
 .tract {
-  height: 3.375px;
+  height: 2px;
 }
 
 .tract-bar {
@@ -84,6 +111,11 @@ body {
   #top-tracts-container {
     display: block;
   }
+
+
+  .leaflet-control-zoom {
+    display: block;
+  }
 }
 
 /* Modal Styles */
@@ -103,24 +135,6 @@ li.key {
   padding-left: 0;
   padding-right: 0;
 }
-
-/* Map */
-#map {
-  z-index: 99;
-  height: 100%;
-}
-
-.leaflet-marker-pane {
-  background: none;
-  pointer-events:none;
-}
-
-.text-labels {
-  font-size: 10px;
-  font-weight: 700;
-  pointer-events: none;
-}
-
 
 /* Tract Info Panel */
 #current-tract-panel {

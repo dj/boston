@@ -29,11 +29,6 @@ var labels = {
   prentocc: 'Renter Occupied'
 }
 
-// var middles = {
-//   prentocc: 0.661, // % renter occupied units in Boston 2010
-//   punemployed: 0.072, // % unemployment Boston Dec 2010
-// }
-
 var middles = {
   prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
   punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'}
@@ -42,6 +37,16 @@ var middles = {
 var formats = {
   prentocc: d3.format('.0%'),
   punemployed: d3.format('.0%')
+}
+
+var titles = {
+  prentocc: '% Renter-Occupied Households',
+  punemployed: '% Unemployment',
+}
+
+var descriptions = {
+  prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
+  punemployed: 'Unemployment rate by census tract. Blue tracts have rates higher than 7.2%, the rate for the City of Boston in December 2010. Red tracts are less than 7.2%.',
 }
 
 var focusStyle = {
@@ -165,6 +170,9 @@ function censusLoaded(err, rows) {
         d3.max(sorted, function (d) { return d.value } )
       ])
       .range(['#b2182b', '#f7f7f7', '#2166ac'])
+
+    $('#title').text(titles[selected]);
+    $('#description').text(descriptions[selected]);
 
     drawSidebar(sorted, selected, color);
     drawMap(sorted, selected, color);
