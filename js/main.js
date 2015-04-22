@@ -112,15 +112,15 @@ function focus(id, selected) {
   $('#tract'+id+' .tract-bar')
     .addClass('focus')
 
-  $('#tract'+id+' .tract-bar')
-    .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
-    .tooltip('hide')
+  // $('#tract'+id+' .tract-bar')
+  //   .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
+  //   .tooltip('hide')
 
-  $('#tract'+id+' .tract-bar')
-    .attr('data-original-title', value)
-    .tooltip('fixTitle')
-    .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
-    .tooltip('toggle')
+  // $('#tract'+id+' .tract-bar')
+  //   .attr('data-original-title', value)
+  //   .tooltip('fixTitle')
+  //   .tooltip({ delay: 0, placement: 'right', trigger: 'manual'})
+  //   .tooltip('toggle')
 
   $('#current-tract-panel').show()
   $('#current-tract-value').text(formats[selected](value)+' '+labels[selected])
@@ -131,9 +131,9 @@ function focusOut(id, selected) {
   $('#current-tract-panel').hide()
   $('#tract'+id+' .tract-bar').removeClass('focus')
 
-  $('#tract'+id+' .tract-bar')
-    .tooltip({ delay: 0, placement: 'bottom', trigger: 'manual'})
-    .tooltip('toggle')
+  // $('#tract'+id+' .tract-bar')
+    // .tooltip({ delay: 0, placement: 'bottom', trigger: 'manual'})
+    // .tooltip('toggle')
 }
 
 function censusLoaded(err, rows) {
@@ -202,13 +202,11 @@ function censusLoaded(err, rows) {
 
 function drawSidebar(rows, selected, color) {
   var barHeight = 20;
+
   // Scales
   var x = d3.scale.linear()
     .domain( [0, d3.max(rows, function (d) { return d.value } )] )
     .range([0, 100]);
-
-
-    // .range(['#b2182b', '#ef8a62', '#fddbc7', '#d1e5f0', '#67a9cf', '#2166ac'])
 
   // Select the SVG and adjust height to fit data
   var chart = d3.select('#top-tracts')
@@ -372,6 +370,7 @@ function drawMap(rows, selected, color) {
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
+        click: mouseover,
       });
     },
   })
