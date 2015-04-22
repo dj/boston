@@ -45,7 +45,7 @@ var formats = {
 }
 
 var focusStyle = {
-  weight: 0.5,
+  weight: 3,
   color: 'black'
 }
 
@@ -121,10 +121,6 @@ function focus(id, selected) {
 function focusOut(id, selected) {
   $('#current-tract-panel').hide()
   $('#tract'+id+' .tract-bar').removeClass('focus')
-
-  // $('#tract'+id+' .tract-bar')
-    // .tooltip({ delay: 0, placement: 'bottom', trigger: 'manual'})
-    // .tooltip('toggle')
 }
 
 function censusLoaded(err, rows) {
@@ -354,14 +350,32 @@ function drawMap(rows, selected, color) {
         var tractBar = $('#'+feature.properties.GEOID10);
 
         focusOut(feature.properties.GEOID10, selected);
+
         baseLayer.resetStyle(e.target);
+      }
+
+      // Keep track of the last tract that was clicked
+      // so we can reset the style
+      var lastTract;
+
+      function click(e) {
+        // Focus on current tract
+        e.tract.setStyle(focusStyle)
+
+        // Remove focus on last tract
+        if (lastTract) {
+          baseLayer.resetStyle(lastTract)
+          lastTract = e.tract;
+        } else {
+          lastTract = e.tract;
+        }
       }
 
       // Attach the event handlers to each tract
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        click: mouseover,
+        click: click,
       });
     },
   })
