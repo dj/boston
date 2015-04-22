@@ -6,18 +6,23 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12.5);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
 new L.Control.Zoom({ position: 'topright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
-L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-  attribution: false,
-  maxZoom: 16
+// var tiles = new L.StamenTileLayer("toner").addTo(theMap)
+
+var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 20,
+	ext: 'png'
 }).addTo(theMap);
 
 L.control.attribution({
   position: 'topleft',
-  prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a> Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ"
+  prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a>"
 }).addTo(theMap);
 
 // Set the svg container height so that it extends to the bottom of the sidebar
@@ -322,7 +327,7 @@ function drawMap(rows, selected, color) {
       return {
         fillColor: fill(feature.properties.GEOID10),
         weight: 0,
-        fillOpacity: 1
+        fillOpacity: .9
       };
     },
 
