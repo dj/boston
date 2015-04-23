@@ -6,8 +6,8 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
-new L.Control.Zoom({ position: 'topright' }).addTo(theMap);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 13);
+new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
 // var tiles = new L.StamenTileLayer("toner").addTo(theMap)
@@ -31,7 +31,7 @@ svgContainer.css('height', svgContainerHeight+'px');
 
 var labels = {
   punemployed: 'Unemployed',
-  prentocc: 'Renter Occupied'
+  prentocc: 'renter-occupied'
 }
 
 var middles = {
@@ -111,7 +111,7 @@ function parse(row) {
 }
 
 // update current tract info
-function focus(id, selected) {
+function focus(id, selected, e) {
   var value = tractsById.get(id)[selected]
 
   // Return if there is no value to show
@@ -122,10 +122,14 @@ function focus(id, selected) {
   $('#tract'+id+' .tract-bar')
     .addClass('focus')
 
-  $('#current-tract-panel').show()
+  $('#current-tract-panel')
+    .show()
+
+  if (e) {
+    $('#current-tract-panel').css({ left: e.containerPoint.x - 100, top: e.containerPoint.y })
+  }
+
   $('#current-tract-value').text(formats[selected](value)+' '+labels[selected])
-  $('#current-tract-id').text('Census Tract ' + id)
-  $('#current-middle').text(middles[selected].val + middles[selected].label)
 }
 
 function focusOut(id, selected) {
@@ -352,7 +356,7 @@ function drawMap(rows, selected, color) {
 
         var tractId = '#tract' + feature.properties.GEOID10
 
-        focus(feature.properties.GEOID10, selected);
+        focus(feature.properties.GEOID10, selected, e);
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();

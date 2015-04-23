@@ -76,7 +76,7 @@ p#description {
 }
 
 .tract {
-  height: 2px;
+  height: 2.5px;
 }
 
 .tract-bar {
@@ -92,6 +92,25 @@ p#description {
 
 .focus {
   background-color: black !important;
+}
+
+/* Modal Styles */
+a#about {
+  color: white;
+}
+
+/* Tract Info Panel */
+#current-tract-panel {
+  z-index: 1000;
+  background-color: ghostwhite;
+  margin: 50px 20px;
+  padding: 1em;
+  max-width: 300px;
+  border: 3px solid black;
+}
+
+p#current-tract-id {
+  /* font-variant: caps; */
 }
 
 @media (min-width: 992px) {
@@ -116,33 +135,5 @@ p#description {
   .leaflet-control-zoom {
     display: block;
   }
-}
-
-/* Modal Styles */
-a#about {
-  color: white;
-}
-
-#color-key {
-  width: 340px;
-}
-
-li.key {
-  border-top-width: 20px;
-  border-top-style: solid;
-  font-size: 1em;
-  width: 14%;
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* Tract Info Panel */
-#current-tract-panel {
-  position: fixed;
-  z-index: 1000;
-  background-color: ghostwhite;
-  margin: 1em;
-  padding: 1em;
-  max-width: 300px;
 }
 
