@@ -77,11 +77,12 @@ Don't nest it or BAD THINGS will happen
       <!-- FORM CONTROLS -->
       <form>
 
+        <h3 id="title" for="description" class="control-label"></h3>
+        <p id="description"></p>
+
         <!-- DATA TYPE SELECT -->
         <div class="form-group">
-          <label id="title" for="description" class="control-label"></label>
-          <p id="description"></p>
-          <label for="data-type" class="control-label">Change Map</label>
+         <label for="data-type" class="control-label">Map Options</label>
           <select class="selectpicker form-control" id="data-type">
           </select>
         </div>
@@ -102,10 +103,8 @@ Don't nest it or BAD THINGS will happen
       <!-- MAP CONTAINER -->
       <div id="map">
 
-        <div id="current-tract-panel" class="panel panel-default leaflet-bottom leaflet-right">
-          <h3 id="current-tract-value" class="panel-title"></h3>
-          <p id="current-tract-id"></p>
-          <p id="current-middle"></p>
+        <div id="current-tract-panel" class="panel panel-default leaflet-top leaflet-left">
+          <h1 id="current-tract-value" class="panel-title"></h1>
         </div>
 
       </div>
