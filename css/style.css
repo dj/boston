@@ -2,13 +2,16 @@
 html,
 body,
 .container-fluid,
-.row,
-.top-tracts-container {
+.row {
   height: 100%;
 }
 
 body {
   overflow: hidden;
+}
+
+.map-container {
+  padding: 0;
 }
 
 .navbar {
@@ -23,29 +26,48 @@ body {
   color: white;
 }
 
-.sidebar {
-  color: black;
-  height: auto;
-  padding: 60px 15px 15px;
-  background-color: #efefef;
-}
-
-.content {
-  position: relative;
-  padding: 0;
-  height: 100%;
-}
-
 /* Map */
-#map {
+div#map {
+  position: absolute;
   z-index: 99;
-  height: 100%;
+  margin-top: 50px;
+  top: 0;
+  bottom: 0;
+  width: 100%;
 }
 
+/* Info Panel */
+div#info {
+  max-width: 300px;
+  margin: 1em;
+  padding: 1em;
+  position: absolute;
+  top: 50px;
+  z-index: 1000;
+}
+
+div#info h1 {
+  font-size: 26px;
+  margin-top: 0;
+}
+
+div#info .bootstrap-select {
+  display: block;
+}
+
+@media (max-width: 992px) {
+  div#info h1 {
+    font-size: 1.2em;
+  }
+
+  div#info p {
+    font-size: .9em;
+  }
+}
 
 /* Hide this because it breaks the layout in mobile right now */
 .leaflet-control-zoom {
-  display: none;
+  /* display: none; */
 }
 
 .leaflet-marker-pane {
@@ -64,76 +86,23 @@ p#description {
   font-size: .9em;
 }
 
-#top-tracts-container {
-  display: none;
-  position:relative;
-  overflow: scroll;
-}
-
-#top-tracts {
-  margin-right: 4em;
-  overflow: visible;
-}
-
-.tract {
-  height: 2.5px;
-}
-
-.tract-bar {
-  background-image: none;
-  margin: 0;
-}
-
-.progress {
-  background-image: none;
-  background-color: none;
-  margin-bottom: 0;
-}
-
-.focus {
-  background-color: black !important;
-}
-
 /* Modal Styles */
 a#about {
   color: white;
 }
 
-/* Tract Info Panel */
-#current-tract-panel {
+/* Selected Tract Info Panel */
+div#selected-tract {
+  display: none;
   z-index: 1000;
-  background-color: ghostwhite;
-  margin: 50px 20px;
-  padding: 1em;
   max-width: 300px;
-  border: 3px solid black;
 }
 
-p#current-tract-id {
-  /* font-variant: caps; */
+div#selected-tract .panel-body {
+  padding: 12px 20px;
 }
 
-@media (min-width: 992px) {
-  .sidebar {
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    display: block;
-  }
-
-  .content {
-    padding: 50px 0px 0px;
-  }
-
-  #top-tracts-container {
-    display: block;
-  }
-
-
-  .leaflet-control-zoom {
-    display: block;
-  }
+p#selected-tract-value {
+  font-size: 1.5em;
 }
 

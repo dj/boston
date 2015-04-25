@@ -10,8 +10,6 @@ var theMap = L.map('map', { zoomControl: false, attributionControl: false }).set
 new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
-// var tiles = new L.StamenTileLayer("toner").addTo(theMap)
-
 var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
 	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 	subdomains: 'abcd',
@@ -21,13 +19,9 @@ var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext
 }).addTo(theMap);
 
 L.control.attribution({
-  position: 'topleft',
+  position: 'bottomleft',
   prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a>"
 }).addTo(theMap);
-
-// Set the svg container height so that it extends to the bottom of the sidebar
-var svgContainerHeight = $(window).height() - $('#top-tracts-container').position().top - 10
-svgContainer.css('height', svgContainerHeight+'px');
 
 var labels = {
   punemployed: 'Unemployed',
@@ -110,48 +104,45 @@ function parse(row) {
   return parsedRow;
 }
 
-// update current tract info
+// update selected tract panel
 function focus(id, selected, e) {
   var value = tractsById.get(id)[selected]
+  $panel = $('#selected-tract'),
+  $panelId = $('#selected-tract-id'),
+  $panelValue = $('#selected-tract-value');
 
-  // Return if there is no value to show
-  if (!value) {
-    return;
-  }
+  // Unhide the panel
+  $panel.show()
 
-  $('#tract'+id+' .tract-bar')
-    .addClass('focus')
+  $panel.css({
+    position: 'absolute',
+    left: e.containerPoint.x - 100,
+    top: e.containerPoint.y + 100
+  })
 
-  $('#current-tract-panel')
-    .show()
-
-  if (e) {
-    $('#current-tract-panel').css({ left: e.containerPoint.x - 100, top: e.containerPoint.y })
-  }
-
-  $('#current-tract-value').text(formats[selected](value)+' '+labels[selected])
+  // $panelId.text('Tract ' + id);
+  $panelValue.text(formats[selected](value))
 }
 
 function focusOut(id, selected) {
-  $('#current-tract-panel').hide()
-  $('#tract'+id+' .tract-bar').removeClass('focus')
+  $('#selected-tract-panel').hide()
 }
 
 function censusLoaded(err, rows) {
-  // Populate the data type dropdown
+  // Populate the data dropdown
   var optionsList = _.without(Object.keys(rows[0]), 'tract'),
-      select = d3.select('#data-type')
+      select = d3.select('#info-opts'),
+      $select = $('#info-opts');
 
-      select
-        .selectAll('option')
-        .data(optionsList).enter()
-        .append('option')
-        .attr('value', function(d) {return d})
-        .text(function(d) {return labels[d]});
+  select
+    .selectAll('option')
+    .data(optionsList).enter()
+    .append('option')
+    .attr('value', function(d) {return d})
+    .text(function(d) {return labels[d]});
 
   // Refresh select options
-  $('select[name=selValue]').val('prentocc');
-  $('.selectpicker').selectpicker('refresh');
+  $select.selectpicker('refresh');
 
   function parseRows(rows, selected) {
     return _(rows)
@@ -167,7 +158,7 @@ function censusLoaded(err, rows) {
   }
 
   // Change map type
-  $('#data-type').on('change', function() {
+  $select.on('change', function() {
     var selected = $(this).find('option:selected').val();
 
     var sorted = parseRows(rows, selected);
@@ -180,10 +171,6 @@ function censusLoaded(err, rows) {
       ])
       .range(['#b2182b', '#f7f7f7', '#2166ac'])
 
-    $('#title').text(titles[selected]);
-    $('#description').text(descriptions[selected]);
-
-    drawSidebar(sorted, selected, color);
     drawMap(sorted, selected, color);
   })
 
@@ -200,117 +187,20 @@ function censusLoaded(err, rows) {
 
 
 
-  drawSidebar(sorted, initSelected, color);
   drawMap(sorted, initSelected, color);
-}
-
-function drawSidebar(rows, selected, color) {
-  var barHeight = 20;
-
-  // Scales
-  var x = d3.scale.linear()
-    .domain( [0, d3.max(rows, function (d) { return d.value } )] )
-    .range([0, 100]);
-
-  // Select the SVG and adjust height to fit data
-  var chart = d3.select('#top-tracts')
-    .attr('height', rows.length * barHeight)
-
-  // Change the map heading
-  var mapHeading = d3.select('#map-heading')
-    .html(labels[selected])
-
-  var tracts = chart.selectAll('.tract')
-    .data(rows, function(d) {
-      return d.tract
-    })
-    .sort(function(a, b) { return d3.descending(a.value, b.value) })
-
-  var tractEnter = tracts
-        .enter()
-          .append('div')
-          .attr('class', 'tract')
-          .attr('id', function(d) { return 'tract'+d.tract }),
-      tractUpdate = tracts,
-      tractExit = tracts.exit();
-
-  tractUpdate
-    .selectAll('.tract-value')
-      .data(rows, function (d) { return d.tract })
-
-  tractUpdate
-    .on('mouseenter', function(d) {
-      focus(d.tract, selected);
-    })
-    .on('mouseleave', function(d) {
-      focusOut(d.tract, selected);
-    })
-
-  tractEnter
-    .append('div')
-      .attr('class', 'progress-bar tract-bar')
-      .attr('data-placement', 'right')
-      .attr('role', 'progressbar')
-      .attr('title', function(d) { return d.value })
-      .attr('alt', function(d) { return d.value })
-      .on('mouseenter', function(d) {
-
-        theMap.eachLayer(function(layer){
-          if (d.tract == layer._tract) {
-            layer.setStyle(focusStyle);
-          }
-        })
-
-      })
-      .on('mouseleave', function(d) {
-
-        theMap.eachLayer(function(layer){
-          if (d.tract == layer._tract) {
-            layer.setStyle(focusOffStyle);
-          }
-        })
-
-      })
-
-  tractUpdate
-    .selectAll('.progress-bar')
-      .data(rows, function(d) { return d.tract })
-      .style('width', function(d) {
-          return x(d.value) + '%';
-      })
-      .style('background-color', function(d) {
-        return color(d.value);
-      })
-
-  var legend = d3.select('#color-key')
-
-  var keyData = _.map(color.range(), function(hex, i) {
-    return {
-      key: i,
-      hex: hex,
-      // tick: Math.round(color.invertExtent(hex)[0])
-    }
-  })
-
-  var keys = legend.selectAll('.key')
-    .data(keyData, function(d) { return d.key })
-
-  keys.enter().append('li')
-    .attr('class', 'key')
-
-  keys
-    .style('border-top-color', function(d) { return d.hex })
-    .text(function(d) {
-      return d.tick
-    });
-
-  keys.exit().remove();
 }
 
 /*============================================================================*/
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
 function drawMap(rows, selected, color) {
+  // Update Info Panel
+  // =================
+  // $('#info-title').text(titles[selected]);
+  $('.navbar-brand').text(titles[selected]);
+  $('#info-desc').text(descriptions[selected]);
+
+
   // Plot Census Tracts
   // ==================
   // + Create a base layer and attach event handlers
@@ -336,15 +226,6 @@ function drawMap(rows, selected, color) {
     },
 
     onEachFeature: function(feature, layer) {
-      var tractBar = $('#tract'+feature.properties.GEOID10);
-
-      // We have more features than we have data,
-      // so don't attach events for features without
-      // a matching tract bar.
-      if (!tractBar[0]) {
-        return;
-      }
-
       layer._tract = feature.properties.GEOID10
 
       // Event handlers for the layer
