@@ -121,7 +121,7 @@ function focus(id, selected, e) {
   })
 
   // $panelId.text('Tract ' + id);
-  $panelValue.text(formats[selected](value))
+  $panelValue.text(formats[selected](value) +' '+ labels[selected])
 }
 
 function focusOut(id, selected) {
@@ -157,12 +157,11 @@ function censusLoaded(err, rows) {
     $('#info-desc').text(descriptions[selected]);
 
     // Axis
-
     var color = d3.scale.linear()
       .domain([min, mid, max])
       .range(['#b2182b', '#f7f7f7', '#2166ac'])
 
-    drawKey(min, mid, max, color);
+    drawKey(selected, min, mid, max, color);
     drawMap(sorted, selected, color);
   }
 
@@ -170,7 +169,7 @@ function censusLoaded(err, rows) {
   $select.on('change', changeData)
 }
 
-function drawKey(min, mid, max, color) {
+function drawKey(selected, min, mid, max, color) {
   var width = 150,
       height = 15;
 
@@ -189,7 +188,6 @@ function drawKey(min, mid, max, color) {
   var defs = d3.select('#selected-tract-key-defs')
     .datum({ min: min, mid: mid, max: max })
 
-
   d3.select('#gradient1-stop1')
     .datum({ min: min })
     .attr('stop-color', function(d) { return color(d.min) })
@@ -206,7 +204,6 @@ function drawKey(min, mid, max, color) {
     .datum({ max: max })
     .attr('stop-color', function(d) { return color(d.max) })
 
-  // Add the rectangle with the fill of the color
   key.select('#gradient1-bar')
     .datum({mid: mid})
     .attr('width', function(d) { return x(d.mid) })
@@ -217,6 +214,15 @@ function drawKey(min, mid, max, color) {
     .attr('transform', function(d) { return 'translate('+x(mid)+',0)' })
     .attr('width', function(d) { return (width - x(mid)) })
     .attr('height', height)
+
+  var axis = d3.svg.axis()
+    .scale(x)
+    .tickFormat(formats[selected])
+    .ticks(1)
+
+  key.append('g').attr('class', 'axis')
+    .attr('transform', 'translate(0,'+(height+5)+')')
+    .call(axis)
 }
 
 function parseRows(rows, selected) {
