@@ -186,46 +186,37 @@ function drawKey(min, mid, max, color) {
     .attr('height', width)
 
   // Append the linearGradient to the svg defs
-  var defs = key.append('defs')
+  var defs = d3.select('#selected-tract-key-defs')
+    .datum({ min: min, mid: mid, max: max })
 
-  var gradient1 = defs
-        .append('svg:linearGradient')
-        .attr('id', 'gradient1'),
-      gradient2 = defs
-        .append('svg:linearGradient')
-        .attr('id', 'gradient2');
 
-  gradient1.append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", color(min))
-    .attr("stop-opacity", 1);
+  d3.select('#gradient1-stop1')
+    .datum({ min: min })
+    .attr('stop-color', function(d) { return color(d.min) })
 
-  gradient1.append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", color(mid))
-    .attr("stop-opacity", 1);
+  d3.select('#gradient1-stop2')
+    .datum({ mid: mid })
+    .attr('stop-color', function(d) { return color(d.mid) })
 
-  gradient2.append('stop')
-    .attr('offset', '0%')
-    .attr('stop-color', color(mid))
-    .attr('stop-opacity', 1)
+  d3.select('#gradient2-stop1')
+    .datum({ mid: mid })
+    .attr('stop-color', function(d) { return color(d.mid) })
 
-  gradient2.append('stop')
-    .attr('offset', '100%')
-    .attr('stop-color', color(max))
-    .attr('stop-opacity', 1)
+  d3.select('#gradient2-stop2')
+    .datum({ max: max })
+    .attr('stop-color', function(d) { return color(d.max) })
 
   // Add the rectangle with the fill of the color
-  key.append("rect")
-    .attr("width", x(mid))
-    .attr("height", height)
-    .style("fill", "url(#gradient1)")
-
-  key.append('rect')
-    .attr('transform', 'translate('+x(mid)+',0)')
-    .attr('width', (width - x(mid)))
+  key.select('#gradient1-bar')
+    .datum({mid: mid})
+    .attr('width', function(d) { return x(d.mid) })
     .attr('height', height)
-    .style('fill', 'url(#gradient2)')
+
+  key.select('#gradient2-bar')
+    .datum({mid: mid})
+    .attr('transform', function(d) { return 'translate('+x(mid)+',0)' })
+    .attr('width', function(d) { return (width - x(mid)) })
+    .attr('height', height)
 }
 
 function parseRows(rows, selected) {

@@ -73,7 +73,21 @@ Don't nest it or BAD THINGS will happen
   <div id="selected-tract" class="panel panel-default">
     <div class="panel-body">
       <p id="selected-tract-value"></p>
-      <svg id="selected-tract-key"></svg>
+      <svg id="selected-tract-key">
+        <defs>
+          <linearGradient id="gradient1">
+            <stop id="gradient1-stop1" offset="0%"/>
+            <stop id="gradient1-stop2" offset="100%"/>
+          </linearGradient>
+
+          <linearGradient id="gradient2">
+            <stop id="gradient2-stop1" offset="0%"/>
+            <stop id="gradient2-stop2" offset="100%"/>
+          </linearGradient>
+        </defs>
+        <rect id="gradient1-bar" fill="url(#gradient1)"/>
+        <rect id="gradient2-bar" fill="url(#gradient2)"/>
+      </svg>
     </div>
   </div>
 
