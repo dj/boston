@@ -11,7 +11,7 @@ new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
 var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	attribution: "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
 	subdomains: 'abcd',
 	minZoom: 0,
 	maxZoom: 20,
@@ -144,63 +144,107 @@ function censusLoaded(err, rows) {
   // Refresh select options
   $select.selectpicker('refresh');
 
-  function parseRows(rows, selected) {
-    return _(rows)
-      .map(function(row) {
-        return {
-          tract: row.tract,
-          value: row[selected],
-        }
-      })
-      .sortBy('value')
-      .reverse()
-      .value();
+  function changeData(e) {
+    var selected = $(this).find('option:selected').val(),
+        sorted = parseRows(rows, selected),
+        min = d3.min(sorted, function(d) { return d.value }),
+        mid = middles[selected].val,
+        max = d3.max(sorted, function (d) { return d.value });
+
+    // Update Info Panel
+    // =================
+    $('.navbar-brand').text(titles[selected]);
+    $('#info-desc').text(descriptions[selected]);
+
+    // Axis
+
+    var color = d3.scale.linear()
+      .domain([min, mid, max])
+      .range(['#b2182b', '#f7f7f7', '#2166ac'])
+
+    drawKey(min, mid, max, color);
+    drawMap(sorted, selected, color);
   }
 
   // Change map type
-  $select.on('change', function() {
-    var selected = $(this).find('option:selected').val();
+  $select.on('change', changeData)
+}
 
-    var sorted = parseRows(rows, selected);
+function drawKey(min, mid, max, color) {
+  var width = 150,
+      height = 15;
 
-    var color = d3.scale.linear()
-      .domain([
-        d3.min(sorted, function(d) { return d.value }),
-        middles[selected].val,
-        d3.max(sorted, function (d) { return d.value } )
-      ])
-      .range(['#b2182b', '#f7f7f7', '#2166ac'])
+  var x = d3.scale.linear()
+    .domain([min, max])
+    .range([0, width])
 
-    drawMap(sorted, selected, color);
-  })
+  var percent = d3.format('.0%')
 
-  // Initial View
-  var initSelected = 'prentocc',
-      sorted = parseRows(rows, initSelected),
-      color = d3.scale.linear()
-                .domain([
-                  d3.min(sorted, function(d) { return d.value }),
-                  middles[initSelected].val,
-                  d3.max(sorted, function (d) { return d.value })
-                ])
-                .range(['#b2182b', '#efefef', '#2166ac'])
+  // Select the SVG for the key
+  var key = d3.select('#selected-tract-key')
+    .attr('width', width)
+    .attr('height', width)
 
+  // Append the linearGradient to the svg defs
+  var defs = key.append('defs')
 
+  var gradient1 = defs
+        .append('svg:linearGradient')
+        .attr('id', 'gradient1'),
+      gradient2 = defs
+        .append('svg:linearGradient')
+        .attr('id', 'gradient2');
 
-  drawMap(sorted, initSelected, color);
+  gradient1.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", color(min))
+    .attr("stop-opacity", 1);
+
+  gradient1.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", color(mid))
+    .attr("stop-opacity", 1);
+
+  gradient2.append('stop')
+    .attr('offset', '0%')
+    .attr('stop-color', color(mid))
+    .attr('stop-opacity', 1)
+
+  gradient2.append('stop')
+    .attr('offset', '100%')
+    .attr('stop-color', color(max))
+    .attr('stop-opacity', 1)
+
+  // Add the rectangle with the fill of the color
+  key.append("rect")
+    .attr("width", x(mid))
+    .attr("height", height)
+    .style("fill", "url(#gradient1)")
+
+  key.append('rect')
+    .attr('transform', 'translate('+x(mid)+',0)')
+    .attr('width', (width - x(mid)))
+    .attr('height', height)
+    .style('fill', 'url(#gradient2)')
+}
+
+function parseRows(rows, selected) {
+  return _(rows)
+    .map(function(row) {
+      return {
+        tract: row.tract,
+        value: row[selected],
+      }
+    })
+    .sortBy('value')
+    .reverse()
+    .value();
 }
 
 /*============================================================================*/
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
 function drawMap(rows, selected, color) {
-  // Update Info Panel
-  // =================
-  // $('#info-title').text(titles[selected]);
-  $('.navbar-brand').text(titles[selected]);
-  $('#info-desc').text(descriptions[selected]);
-
-
   // Plot Census Tracts
   // ==================
   // + Create a base layer and attach event handlers
