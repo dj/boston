@@ -91,7 +91,7 @@ a#about {
   color: white;
 }
 
-/* Selected Tract Info Panel */
+/* Selected Tract Panel */
 div#selected-tract {
   display: none;
   z-index: 1000;
@@ -99,10 +99,18 @@ div#selected-tract {
 }
 
 div#selected-tract .panel-body {
-  padding: 12px 20px;
+  padding: 12px 16px;
 }
 
 p#selected-tract-value {
   font-size: 1.5em;
+  margin-bottom: 3px;
+}
+
+svg#selected-tract-key {
+  border: 1px solid black;
+  height: 30px;
+  /* overflow: visible; */
+  width: 150px;
 }
 
