@@ -103,14 +103,27 @@ div#selected-tract .panel-body {
 }
 
 p#selected-tract-value {
-  font-size: 1.5em;
+  font-size: 1.25em;
   margin-bottom: 3px;
 }
 
 svg#selected-tract-key {
   /* border: 1px solid black; */
   height: 30px;
-  /* overflow: visible; */
+  overflow: visible;
   width: 150px;
+}
+
+/* Axis Styles */
+.axis path,
+.axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: sans-serif;
+    font-size: 11px;
 }
 
