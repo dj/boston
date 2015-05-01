@@ -164,7 +164,7 @@ function censusLoaded(err, rows) {
       .range([0, width])
 
     drawKey(selected, min, mid, max, color, x);
-    drawMap(sorted, selected, color, x);
+    drawMap(selected, color, x);
   }
 
   // Change map type
