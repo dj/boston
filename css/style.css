@@ -16,7 +16,7 @@ body {
 
 .navbar {
   border-radius: 0;
-  z-index: 1000;
+  z-index: 2;
 }
 .navbar-inverse {
   background-image: none;
@@ -39,7 +39,7 @@ body {
 /* Map */
 div#map {
   position: absolute;
-  z-index: 99;
+  z-index: 0;
   margin-top: 50px;
   top: 0;
   bottom: 0;
@@ -53,7 +53,7 @@ div#info {
   padding: 1em;
   position: absolute;
   top: 50px;
-  z-index: 1000;
+  z-index: 1;
 }
 
 div#info h1 {
@@ -104,7 +104,7 @@ a#about {
 /* Selected Tract Panel */
 div#selected-tract {
   /* display: none; */
-  z-index: 1000;
+  z-index: 1;
   max-width: 300px;
 }
 
