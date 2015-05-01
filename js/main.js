@@ -148,27 +148,30 @@ function censusLoaded(err, rows) {
         sorted = parseRows(rows, selected),
         min = d3.min(sorted, function(d) { return d.value }),
         mid = middles[selected].val,
-        max = d3.max(sorted, function (d) { return d.value });
+        max = d3.max(sorted, function (d) { return d.value }),
+        width = 260;
 
     // Update Info Panel
-    // =================
     $('.navbar-brand').text(titles[selected]);
     $('#info-desc').text(descriptions[selected]);
 
-    // Axis
+    // Axes
     var color = d3.scale.linear()
       .domain([min, mid, max])
-      .range(['#b2182b', '#f7f7f7', '#2166ac'])
+      .range(['#b2182b', '#f7f7f7', '#2166ac']);
+    var x = d3.scale.linear()
+      .domain([min, max])
+      .range([0, width])
 
-    drawKey(selected, min, mid, max, color);
-    drawMap(sorted, selected, color, min, mid, max);
+    drawKey(selected, min, mid, max, color, x);
+    drawMap(sorted, selected, color, x);
   }
 
   // Change map type
   $select.on('change', changeData)
 }
 
-function drawKey(selected, min, mid, max, color) {
+function drawKey(selected, min, mid, max, color, x) {
   var percent = d3.format('.0%'),
       height = 15
 
@@ -178,19 +181,6 @@ function drawKey(selected, min, mid, max, color) {
     .style('width', '100%')
     .attr('height', height)
 
-  var width = $('#selected-tract-key').width();
-
-  // key
-  //   .append('rect')
-  //     .attr('id', 'selected-tract-line')
-  //     .attr('x', 0)
-  //     .attr('y', 0)
-  //     .attr('height', height)
-  //     .attr('width', 10)
-
-  var x = d3.scale.linear()
-    .domain([min, max])
-    .range([0, width])
 
   // Append the linearGradient to the svg defs
   var defs = d3.select('#selected-tract-key-defs')
@@ -222,7 +212,7 @@ function drawKey(selected, min, mid, max, color) {
   key.select('#gradient2-bar')
     .datum({mid: mid})
     .attr('transform', function(d) { return 'translate('+x(mid)+',0)' })
-    .attr('width', function(d) { return (width - x(mid)) })
+    .attr('width', function(d) { return x(max) - x(mid) })
     .attr('height', height)
 
   var axis = d3.svg.axis()
@@ -237,6 +227,12 @@ function drawKey(selected, min, mid, max, color) {
     .attr('transform', 'translate(0,'+(height + 5)+')')
     .call(axis)
 
+  key
+    .datum({mid: mid}) // Not used, just need to append line once
+    .append('line')
+      .attr('id', 'selected-tract-value-line')
+      .attr('stroke', 'black')
+      .attr('stroke-width', 2)
 }
 
 function parseRows(rows, selected) {
@@ -255,7 +251,7 @@ function parseRows(rows, selected) {
 /*============================================================================*/
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
-function drawMap(rows, selected, color) {
+function drawMap(selected, color, x) {
   // Plot Census Tracts
   // ==================
   // + Create a base layer and attach event handlers
@@ -289,6 +285,15 @@ function drawMap(rows, selected, color) {
         tract.setStyle(focusStyle);
 
         focus(feature.properties.GEOID10, selected, e);
+
+        var selectedVal = tractsById.get(feature.properties.GEOID10)[selected]
+
+        // Update the key
+        d3.select('#selected-tract-value-line')
+          .attr('x1', x(selectedVal))
+          .attr('y1', 0)
+          .attr('x2', x(selectedVal))
+          .attr('y2', 15)
 
         if (!L.Browser.ie && !L.Browser.opera) {
           tract.bringToFront();
