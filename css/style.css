@@ -26,6 +26,16 @@ body {
   color: white;
 }
 
+.navbar-text {
+  display: block;
+}
+
+@media (max-width: 992px) {
+  .navbar-text {
+    display: none;
+  }
+}
+
 /* Map */
 div#map {
   position: absolute;
@@ -93,7 +103,7 @@ a#about {
 
 /* Selected Tract Panel */
 div#selected-tract {
-  display: none;
+  /* display: none; */
   z-index: 1000;
   max-width: 300px;
 }

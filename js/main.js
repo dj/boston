@@ -112,7 +112,7 @@ function focus(id, selected, e) {
   $panelValue = $('#selected-tract-value');
 
   // Unhide the panel
-  $panel.show()
+  $panel.toggleClass('invisible')
 
   $panel.css({
     position: 'absolute',
@@ -120,12 +120,11 @@ function focus(id, selected, e) {
     top: e.containerPoint.y + 100
   })
 
-  // $panelId.text('Tract ' + id);
   $panelValue.text(formats[selected](value) +' '+ labels[selected])
 }
 
 function focusOut(id, selected) {
-  $('#selected-tract-panel').hide()
+  $('#selected-tract').toggleClass('invisible')
 }
 
 function censusLoaded(err, rows) {
@@ -162,7 +161,7 @@ function censusLoaded(err, rows) {
       .range(['#b2182b', '#f7f7f7', '#2166ac'])
 
     drawKey(selected, min, mid, max, color);
-    drawMap(sorted, selected, color);
+    drawMap(sorted, selected, color, min, mid, max);
   }
 
   // Change map type
@@ -170,24 +169,34 @@ function censusLoaded(err, rows) {
 }
 
 function drawKey(selected, min, mid, max, color) {
-  var width = 150,
-      height = 15;
+  var percent = d3.format('.0%'),
+      height = 15
+
+  // Select the SVG for the key
+  var key = d3.select('#selected-tract-key')
+    .datum({ min: min, mid: mid, max: max})
+    .style('width', '100%')
+    .attr('height', height)
+
+  var width = $('#selected-tract-key').width();
+
+  // key
+  //   .append('rect')
+  //     .attr('id', 'selected-tract-line')
+  //     .attr('x', 0)
+  //     .attr('y', 0)
+  //     .attr('height', height)
+  //     .attr('width', 10)
 
   var x = d3.scale.linear()
     .domain([min, max])
     .range([0, width])
 
-  var percent = d3.format('.0%')
-
-  // Select the SVG for the key
-  var key = d3.select('#selected-tract-key')
-    .attr('width', width)
-    .attr('height', width)
-
   // Append the linearGradient to the svg defs
   var defs = d3.select('#selected-tract-key-defs')
     .datum({ min: min, mid: mid, max: max })
 
+  // Update gradient partition colors
   d3.select('#gradient1-stop1')
     .datum({ min: min })
     .attr('stop-color', function(d) { return color(d.min) })
@@ -204,6 +213,7 @@ function drawKey(selected, min, mid, max, color) {
     .datum({ max: max })
     .attr('stop-color', function(d) { return color(d.max) })
 
+  // Update gradient partition sizes
   key.select('#gradient1-bar')
     .datum({mid: mid})
     .attr('width', function(d) { return x(d.mid) })
@@ -218,11 +228,15 @@ function drawKey(selected, min, mid, max, color) {
   var axis = d3.svg.axis()
     .scale(x)
     .tickFormat(formats[selected])
-    .ticks(1)
+    .tickValues([min, mid, max])
 
-  key.append('g').attr('class', 'axis')
-    .attr('transform', 'translate(0,'+(height+5)+')')
+  key
+    .append('g').attr('class', 'axis')
+
+  key.selectAll('.axis')
+    .attr('transform', 'translate(0,'+(height + 5)+')')
     .call(axis)
+
 }
 
 function parseRows(rows, selected) {
@@ -267,16 +281,12 @@ function drawMap(rows, selected, color) {
     },
 
     onEachFeature: function(feature, layer) {
-      layer._tract = feature.properties.GEOID10
-
       // Event handlers for the layer
       function mouseover(e) {
         var tract = e.target;
 
         // highlight tract on map
         tract.setStyle(focusStyle);
-
-        var tractId = '#tract' + feature.properties.GEOID10
 
         focus(feature.properties.GEOID10, selected, e);
 
@@ -286,8 +296,6 @@ function drawMap(rows, selected, color) {
       }
 
       function mouseout(e) {
-        var tractBar = $('#'+feature.properties.GEOID10);
-
         focusOut(feature.properties.GEOID10, selected);
 
         baseLayer.resetStyle(e.target);
@@ -295,26 +303,26 @@ function drawMap(rows, selected, color) {
 
       // Keep track of the last tract that was clicked
       // so we can reset the style
-      var lastTract;
+      // var lastTract;
 
-      function click(e) {
-        // Focus on current tract
-        e.tract.setStyle(focusStyle)
+      // function contextmenu(e) {
+      //   // Focus on current tract
+      //   e.tract.setStyle(focusStyle)
 
-        // Remove focus on last tract
-        if (lastTract) {
-          baseLayer.resetStyle(lastTract)
-          lastTract = e.tract;
-        } else {
-          lastTract = e.tract;
-        }
-      }
+      //   // Remove focus on last tract
+      //   if (lastTract) {
+      //     baseLayer.resetStyle(lastTract)
+      //     lastTract = e.tract;
+      //   } else {
+      //     lastTract = e.tract;
+      //   }
+      // }
 
       // Attach the event handlers to each tract
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        click: click,
+        // contextmenu: contextmenu,
       });
     },
   })
