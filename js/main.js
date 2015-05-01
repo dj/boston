@@ -138,11 +138,20 @@ function censusLoaded(err, rows) {
     .data(optionsList).enter()
     .append('option')
     .attr('value', function(d) {return d})
+    .each(function(d) {
+      var option = d3.select(this).attr('value')
+      if (option == 'punemployed') {
+        d3.select(this).property('selected')
+      }
+    })
     .text(function(d) {return labels[d]});
+
+  // var initSelected = select.select
 
   // Refresh select options
   $select.selectpicker('refresh');
 
+  // Draw a new map and key. Kicks off everything.
   function changeData(e) {
     var selected = $(this).find('option:selected').val(),
         sorted = parseRows(rows, selected),
@@ -167,8 +176,9 @@ function censusLoaded(err, rows) {
     drawMap(selected, color, x);
   }
 
-  // Change map type
+  // Change map type an init the map
   $select.on('change', changeData)
+  $select.change();
 }
 
 function drawKey(selected, min, mid, max, color, x) {
