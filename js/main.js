@@ -25,59 +25,70 @@ L.control.attribution({
 
 var labels = {
   punemployed: 'Unemployed',
-  prentocc: 'Renter-occupied',
+  homeownership: 'Homeownership',
+  // prentocc: 'Renter-occupied',
   medincome: 'Median Income',
+  ownmedval: 'Median Unit Value',
 }
 
 var middles = {
-  prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
+  // prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
+  homeownership: { val: 0.341, label: 'Homeownership rate, 2009-2013' },
   punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'},
   medincome: { val: 53601, label: 'Median household income, 2009-2013' },
+  ownmedval: { val: 371000, label: 'Median value of owner-occupied housing units, 2009-2013' },
 }
 
 var formats = {
-  prentocc: d3.format('.0%'),
-  punemployed: d3.format('.0%'),
-  medincome: d3.format(',.2f'),
+  // prentocc: d3.format('.0%'),
+  homeownership: d3.format('.0%'), // percentage
+  punemployed: d3.format('.0%'), // percentage
+  medincome: function(d) { return '$' + d3.format(',.')(d) }, // currency
+  ownmedval: function(d) { return '$' + d3.format(',.')(d) }, // currency
 }
 
 var titles = {
-  prentocc: '% Renter-Occupied Households',
-  punemployed: '% Unemployment',
-  medincome: 'Median Household Income',
+  // prentocc: 'Renter-occupied',
+  homeownership: 'Homeownership',
+  punemployed: 'Unemployment',
+  medincome: 'Median Income',
+  ownmedval: 'Median Unit Value',
 }
 
 var descriptions = {
-  prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
-  punemployed: 'Unemployment rate by census tract. Blue tracts have rates higher than 7.2%, the rate for the City of Boston in December 2010. Red tracts are less than 7.2%.',
+  // prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
+  homeownership: 'Home ownership rate description.',
+  punemployed: 'Percent unemployed description',
   medincome: 'Median Income description.',
+  ownmedval: 'Median value description.',
 }
 
 var colorRanges = {
+  // prentocc: [
+  //   '#d7191c',
+  //   '#ffffbf',
+  //   '#2c7bb6',
+  // ],
   punemployed: [
     '#1a9641',
     '#ffffbf',
     '#d7191c',
   ],
-  prentocc: [
-    '#d7191c',
-    '#ffffbf',
+  homeownership: [
     '#2c7bb6',
+    '#ffffbf',
+    '#d7191c',
   ],
   medincome: [
     '#7b3294',
-    '#f7f7f7',
+    '#ffffbf',
+    '#008837',
+  ],
+  ownmedval: [
+    '#7b3294',
+    '#ffffbf',
     '#008837',
   ]
-}
-
-var focusStyle = {
-  weight: 3,
-  color: 'black'
-}
-
-var focusOffStyle = {
-  weight: 0
 }
 
 // Load the data
@@ -119,8 +130,10 @@ function parse(row) {
   var parsedRow = {
     tract: +row['CT_ID_10'],
     punemployed: +row['punemploy'],
-    prentocc: +row['prentocc'],
+    // prentocc: +row['prentocc'],
+    homeownership: +row['homeownership'],
     medincome: +row['medincome'],
+    ownmedval: +row['ownmedval'],
   }
 
   tractsById.set(row['CT_ID_10'], parsedRow);
@@ -304,7 +317,7 @@ function drawMap(selected, color, x) {
       return {
         fillColor: fill(feature.properties.GEOID10),
         weight: 0,
-        fillOpacity: .9
+        fillOpacity: .65
       };
     },
 
@@ -314,7 +327,7 @@ function drawMap(selected, color, x) {
         var tract = e.target;
 
         // highlight tract on map
-        tract.setStyle(focusStyle);
+        tract.setStyle({ weight: 3, color: 'black'})
 
         focus(feature.properties.GEOID10, selected, e);
 
