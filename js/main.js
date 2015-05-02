@@ -74,7 +74,7 @@ var theMap = L.map('map', { zoomControl: false, attributionControl: false }).set
 new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
-var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
+var tiles = L.tileLayer('http://{s}.tile.stamen.com/terrain-lines/{z}/{x}/{y}.{ext}', {
 	attribution: "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
 	subdomains: 'abcd',
 	minZoom: 0,
@@ -129,12 +129,6 @@ function parse(row) {
   tractsById.set(row['CT_ID_10'], parsedRow);
 
   return parsedRow;
-}
-
-// update selected tract panel
-
-
-function focusOut(id, selected) {
 }
 
 function censusLoaded(err, rows) {
