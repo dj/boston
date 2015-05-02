@@ -1,28 +1,3 @@
-// Show the about / welcome modal
-$('#about-modal').modal('show').addClass('fade');
-
-var svg = $('#top-tracts'),
-    svgContainer = $('#top-tracts-container'),
-    width = svgContainer.width();
-
-// Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
-new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
-
-// Initialize the tile layer and add it to the map.
-var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
-	attribution: "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
-	subdomains: 'abcd',
-	minZoom: 0,
-	maxZoom: 20,
-	ext: 'png'
-}).addTo(theMap);
-
-L.control.attribution({
-  position: 'bottomleft',
-  prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a>"
-}).addTo(theMap);
-
 var labels = {
   punemployed: 'Unemployed',
   homeownership: 'Homeownership',
@@ -91,17 +66,33 @@ var colorRanges = {
   ]
 }
 
+// Show the about modal
+$('#about-modal').modal('show').addClass('fade');
+
+// Initialize the map
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
+new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
+
+// Initialize the tile layer and add it to the map.
+var tiles = L.tileLayer('http://{s}.tile.stamen.com/toner-lines/{z}/{x}/{y}.{ext}', {
+	attribution: "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a> &mdash; Map data &copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 20,
+	ext: 'png'
+}).addTo(theMap);
+
+L.control.attribution({
+  position: 'bottomleft',
+  prefix: "<a href='http://leafletjs.com' title='A JS library for interactive maps'>Leaflet</a>"
+}).addTo(theMap);
+
 // Load the data
 d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
 d3.csv('data/boston-census-2010.csv', parse, censusLoaded);
 
 // Draw neighborhoods
 function neighborhoodsLoaded(err, data) {
-  var style = {
-    color: 'none',
-    fillColor: 'none',
-  }
-
   function onEachFeature(feature, layer) {
     var center = layer.getBounds().getCenter();
 
@@ -115,22 +106,21 @@ function neighborhoodsLoaded(err, data) {
   }
 
   L.geoJson(data, {
-    style: style,
+    style: { color: 'none', fillColor: 'none', },
     onEachFeature: onEachFeature,
   }).addTo(theMap);
 }
 
 // Keep a map of tracts that will be used
-// to look up values for the leaflet census overlay
+// to look up values for the leaflet overlay
 var tractsById = d3.map()
 
 // Parse the rows of the CSV, coerce strings to nums
 function parse(row) {
-  // Parse rows that we care about, coercing strings to nums
   var parsedRow = {
+    // prentocc: +row['prentocc'],
     tract: +row['CT_ID_10'],
     punemployed: +row['punemploy'],
-    // prentocc: +row['prentocc'],
     homeownership: +row['homeownership'],
     medincome: +row['medincome'],
     ownmedval: +row['ownmedval'],
@@ -142,26 +132,9 @@ function parse(row) {
 }
 
 // update selected tract panel
-function focus(id, selected, e) {
-  var value = tractsById.get(id)[selected]
-  $panel = $('#selected-tract'),
-  $panelId = $('#selected-tract-id'),
-  $panelValue = $('#selected-tract-value');
 
-  // Unhide the panel
-  $panel.toggleClass('invisible')
-
-  $panel.css({
-    position: 'absolute',
-    left: e.containerPoint.x - 100,
-    top: e.containerPoint.y + 100
-  })
-
-  $panelValue.text(formats[selected](value) +' '+ labels[selected])
-}
 
 function focusOut(id, selected) {
-  $('#selected-tract').toggleClass('invisible')
 }
 
 function censusLoaded(err, rows) {
@@ -324,20 +297,34 @@ function drawMap(selected, color, x) {
     onEachFeature: function(feature, layer) {
       // Event handlers for the layer
       function mouseover(e) {
-        var tract = e.target;
+        var tract = e.target,
+            value = tractsById.get(feature.properties.GEOID10)[selected];
 
-        // highlight tract on map
+        // Highlight tract on map
         tract.setStyle({ weight: 3, color: 'black'})
 
-        focus(feature.properties.GEOID10, selected, e);
+        // Update selected tract panel
+        $panel = $('#selected-tract'),
+        $panelValue = $('#selected-tract-value');
 
-        var selectedVal = tractsById.get(feature.properties.GEOID10)[selected]
+        // Unhide the selected tract panel
+        $panel.toggleClass('invisible')
+
+        // Position the panel below the event
+        $panel.css({
+          position: 'absolute',
+          left: e.containerPoint.x - 100,
+          top: e.containerPoint.y + 100
+        })
+
+        // Update the selected tract panel with the tract value
+        $panelValue.text(formats[selected](value) +' '+ labels[selected])
 
         // Update the key
         d3.select('#selected-tract-value-line')
-          .attr('x1', x(selectedVal))
+          .attr('x1', x(value))
           .attr('y1', 0)
-          .attr('x2', x(selectedVal))
+          .attr('x2', x(value))
           .attr('y2', 15)
 
         if (!L.Browser.ie && !L.Browser.opera) {
@@ -346,33 +333,32 @@ function drawMap(selected, color, x) {
       }
 
       function mouseout(e) {
-        focusOut(feature.properties.GEOID10, selected);
+        $('#selected-tract').toggleClass('invisible')
 
         baseLayer.resetStyle(e.target);
       }
 
       // Keep track of the last tract that was clicked
       // so we can reset the style
-      // var lastTract;
+      var lastTract;
 
-      // function contextmenu(e) {
-      //   // Focus on current tract
-      //   e.tract.setStyle(focusStyle)
+      function contextmenu(e) {
+        // Focus on current tract
+        e.tract.setStyle({ weight: 3, color: 'black'})
 
-      //   // Remove focus on last tract
-      //   if (lastTract) {
-      //     baseLayer.resetStyle(lastTract)
-      //     lastTract = e.tract;
-      //   } else {
-      //     lastTract = e.tract;
-      //   }
-      // }
+        if (lastTract) {
+          baseLayer.resetStyle(lastTract)
+          lastTract = e.tract;
+        } else {
+          lastTract = e.tract;
+        }
+      }
 
       // Attach the event handlers to each tract
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        // contextmenu: contextmenu,
+        contextmenu: contextmenu,
       });
     },
   })
