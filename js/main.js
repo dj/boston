@@ -6,7 +6,7 @@ var svg = $('#top-tracts'),
     width = svgContainer.width();
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 13);
+var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
 new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
@@ -25,27 +25,50 @@ L.control.attribution({
 
 var labels = {
   punemployed: 'Unemployed',
-  prentocc: 'renter-occupied'
+  prentocc: 'Renter-occupied',
+  medincome: 'Median Income',
 }
 
 var middles = {
   prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
-  punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'}
+  punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'},
+  medincome: { val: 53601, label: 'Median household income, 2009-2013' },
 }
 
 var formats = {
   prentocc: d3.format('.0%'),
-  punemployed: d3.format('.0%')
+  punemployed: d3.format('.0%'),
+  medincome: d3.format(',.2f'),
 }
 
 var titles = {
   prentocc: '% Renter-Occupied Households',
   punemployed: '% Unemployment',
+  medincome: 'Median Household Income',
 }
 
 var descriptions = {
   prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
   punemployed: 'Unemployment rate by census tract. Blue tracts have rates higher than 7.2%, the rate for the City of Boston in December 2010. Red tracts are less than 7.2%.',
+  medincome: 'Median Income description.',
+}
+
+var colorRanges = {
+  punemployed: [
+    '#1a9641',
+    '#ffffbf',
+    '#d7191c',
+  ],
+  prentocc: [
+    '#d7191c',
+    '#ffffbf',
+    '#2c7bb6',
+  ],
+  medincome: [
+    '#7b3294',
+    '#f7f7f7',
+    '#008837',
+  ]
 }
 
 var focusStyle = {
@@ -96,7 +119,8 @@ function parse(row) {
   var parsedRow = {
     tract: +row['CT_ID_10'],
     punemployed: +row['punemploy'],
-    prentocc: +row['prentocc']
+    prentocc: +row['prentocc'],
+    medincome: +row['medincome'],
   }
 
   tractsById.set(row['CT_ID_10'], parsedRow);
@@ -146,8 +170,6 @@ function censusLoaded(err, rows) {
     })
     .text(function(d) {return labels[d]});
 
-  // var initSelected = select.select
-
   // Refresh select options
   $select.selectpicker('refresh');
 
@@ -167,7 +189,7 @@ function censusLoaded(err, rows) {
     // Axes
     var color = d3.scale.linear()
       .domain([min, mid, max])
-      .range(['#b2182b', '#f7f7f7', '#2166ac']);
+      .range(colorRanges[selected]);
     var x = d3.scale.linear()
       .domain([min, max])
       .range([0, width])
