@@ -32,10 +32,10 @@ var titles = {
 
 var descriptions = {
   // prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
-  homeownership: 'Home ownership rate description.',
-  punemployed: 'Percent unemployed description',
-  medincome: 'Median Income description.',
-  ownmedval: 'Median value description.',
+  homeownership: 'The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. Tracts in <b>red</b> have higher homeownership rates, <b>blue</b> tracts have lower homeownership rates.',
+  punemployed: 'The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <b>Red</b> tracts have higher unemployment, <b>green</b> tracts have lower unemployment.',
+  medincome: 'The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <b>Green</b> tracts have higher median household incomes, <b>Purple</b> tracts have lower median household incomes.',
+  ownmedval: 'The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <b>Green</b> tracts have higher median values, <b>Purple</b> tracts have lower median values.',
 }
 
 var colorRanges = {
@@ -169,8 +169,8 @@ function censusLoaded(err, rows) {
         width = 260;
 
     // Update Info Panel
-    $('.navbar-brand').text(titles[selected]);
-    $('#info-desc').text(descriptions[selected]);
+    $('.navbar-brand').html(titles[selected]);
+    $('#info-desc').html(descriptions[selected]);
 
     // Axes
     var color = d3.scale.linear()
