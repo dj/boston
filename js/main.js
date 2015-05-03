@@ -336,7 +336,7 @@ function drawMap(selected, color, x) {
       // so we can reset the style
       var lastTract;
 
-      function contextmenu(e) {
+      function click(e) {
         // Focus on current tract
         e.tract.setStyle({ weight: 3, color: 'black'})
 
@@ -352,7 +352,7 @@ function drawMap(selected, color, x) {
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        contextmenu: contextmenu,
+        click: click,
       });
     },
   })
