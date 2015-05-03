@@ -289,13 +289,9 @@ function drawMap(selected, color, x) {
     },
 
     onEachFeature: function(feature, layer) {
-      // Event handlers for the layer
-      function mouseover(e) {
-        var tract = e.target,
-            value = tractsById.get(feature.properties.GEOID10)[selected];
-
+      function focus(e) {
         // Highlight tract on map
-        tract.setStyle({ weight: 3, color: 'black'})
+        e.target.setStyle({ weight: 3, color: 'black'})
 
         // Update selected tract panel
         $panel = $('#selected-tract'),
@@ -312,6 +308,7 @@ function drawMap(selected, color, x) {
         })
 
         // Update the selected tract panel with the tract value
+        var value = tractsById.get(feature.properties.GEOID10)[selected];
         $panelValue.text(formats[selected](value) +' '+ labels[selected])
 
         // Update the key
@@ -320,14 +317,21 @@ function drawMap(selected, color, x) {
           .attr('y1', 0)
           .attr('x2', x(value))
           .attr('y2', 15)
+      }
+
+      // Event handlers for the layer
+      function mouseover(e) {
+        focus(e)
 
         if (!L.Browser.ie && !L.Browser.opera) {
-          tract.bringToFront();
+          e.target.bringToFront();
         }
       }
 
       function mouseout(e) {
         $('#selected-tract').toggleClass('invisible')
+
+        focus(e)
 
         baseLayer.resetStyle(e.target);
       }
@@ -338,7 +342,8 @@ function drawMap(selected, color, x) {
 
       function click(e) {
         // Focus on current tract
-        e.tract.setStyle({ weight: 3, color: 'black'})
+        focus(e)
+        e.target.setStyle({ weight: 3, color: 'black'})
 
         if (lastTract) {
           baseLayer.resetStyle(lastTract)
