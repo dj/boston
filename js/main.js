@@ -1,9 +1,9 @@
 var labels = {
-  punemployed: 'Unemployed',
+  punemployed: 'Unemployement',
   homeownership: 'Homeownership',
   // prentocc: 'Renter-occupied',
   medincome: 'Median Income',
-  ownmedval: 'Median Unit Value',
+  ownmedval: 'Median Value',
 }
 
 var middles = {
@@ -20,14 +20,6 @@ var formats = {
   punemployed: d3.format('.0%'), // percentage
   medincome: function(d) { return '$' + d3.format(',.')(d) }, // currency
   ownmedval: function(d) { return '$' + d3.format(',.')(d) }, // currency
-}
-
-var titles = {
-  // prentocc: 'Renter-occupied',
-  homeownership: 'Homeownership',
-  punemployed: 'Unemployment',
-  medincome: 'Median Income',
-  ownmedval: 'Median Unit Value',
 }
 
 var descriptions = {
@@ -163,7 +155,7 @@ function censusLoaded(err, rows) {
         width = 240;
 
     // Update Info Panel
-    $('.navbar-brand').html(titles[selected]);
+    $('.navbar-brand').html(labels[selected]);
     $('#info-desc').html(descriptions[selected]);
 
     // Axes
@@ -304,13 +296,14 @@ function drawMap(selected, color, x) {
         // Position the panel below the event
         $panel.css({
           position: 'absolute',
-          left: e.containerPoint.x - 100,
+          left: e.containerPoint.x - 30,
           top: e.containerPoint.y + 100
         })
 
         // Update the selected tract panel with the tract value
         var value = tractsById.get(feature.properties.GEOID10)[selected];
-        $panelValue.text(formats[selected](value) +' '+ labels[selected])
+        // $panelValue.text(formats[selected](value) +' '+ labels[selected])
+        $panelValue.text(formats[selected](value))
 
         // Update the key
         d3.select('#selected-tract-value-line')
