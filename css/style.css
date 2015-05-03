@@ -91,9 +91,14 @@ div#info .bootstrap-select {
   pointer-events: none;
 }
 
-/* Top Tracts Bar Chart */
+/* Map Options */
 p#description {
   font-size: .9em;
+}
+
+span#color-0,
+span#color-1 {
+  font-weight: 700;
 }
 
 /* Modal Styles */

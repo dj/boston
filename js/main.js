@@ -24,10 +24,10 @@ var formats = {
 
 var descriptions = {
   // prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
-  homeownership: 'The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <b>Red</b> tracts have higher homeownership rates. <b>Blue</b> tracts have lower homeownership rates.',
-  punemployed: 'The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <b>Red</b> tracts have higher unemployment. <b>Green</b> tracts have lower unemployment.',
-  medincome: 'The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <b>Green</b> tracts have higher median household incomes. <b>Purple</b> tracts have lower median household incomes.',
-  ownmedval: 'The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <b>Green</b> tracts have higher median values, <b>Purple</b> tracts have lower median values.',
+  homeownership: "The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <span id='color-0'>Red</span> tracts have higher homeownership rates. <span id='color-1'>Blue</span> tracts have lower homeownership rates.",
+  punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
+  medincome: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
+  ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values, <span id='color-1'>Purple</span> tracts have lower median values.",
 }
 
 var colorRanges = {
@@ -157,6 +157,8 @@ function censusLoaded(err, rows) {
     // Update Info Panel
     $('.navbar-brand').html(labels[selected]);
     $('#info-desc').html(descriptions[selected]);
+    $('#color-0').css('color', colorRanges[selected][2]);
+    $('#color-1').css('color', colorRanges[selected][0]);
 
     // Axes
     var color = d3.scale.linear()
