@@ -338,26 +338,26 @@ function drawMap(selected, color, x) {
 
       // Keep track of the last tract that was clicked
       // so we can reset the style
-      var lastTract;
+      // var lastTract;
 
-      function click(e) {
+      // function click(e) {
         // Focus on current tract
-        focus(e)
-        e.target.setStyle({ weight: 3, color: 'black'})
+        // focus(e)
+        // e.target.setStyle({ weight: 3, color: 'black'})
 
-        if (lastTract) {
-          baseLayer.resetStyle(lastTract)
-          lastTract = e.tract;
-        } else {
-          lastTract = e.tract;
-        }
-      }
+        // if (lastTract) {
+        //   baseLayer.resetStyle(lastTract)
+        //   lastTract = e.tract;
+        // } else {
+        //   lastTract = e.tract;
+        // }
+      // }
 
       // Attach the event handlers to each tract
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        click: click,
+        // click: click,
       });
     },
   })
