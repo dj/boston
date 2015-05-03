@@ -160,7 +160,7 @@ function censusLoaded(err, rows) {
         min = d3.min(sorted, function(d) { return d.value }),
         mid = middles[selected].val,
         max = d3.max(sorted, function (d) { return d.value }),
-        width = 260;
+        width = 240;
 
     // Update Info Panel
     $('.navbar-brand').html(titles[selected]);
@@ -185,7 +185,7 @@ function censusLoaded(err, rows) {
 
 function drawKey(selected, min, mid, max, color, x) {
   var percent = d3.format('.0%'),
-      height = 15
+      height = 10
 
   // Select the SVG for the key
   var key = d3.select('#selected-tract-key')
@@ -218,12 +218,13 @@ function drawKey(selected, min, mid, max, color, x) {
   // Update gradient partition sizes
   key.select('#gradient1-bar')
     .datum({mid: mid})
+    .attr('transform', 'translate(0, 5)')
     .attr('width', function(d) { return x(d.mid) })
     .attr('height', height)
 
   key.select('#gradient2-bar')
     .datum({mid: mid})
-    .attr('transform', function(d) { return 'translate('+x(mid)+',0)' })
+    .attr('transform', function(d) { return 'translate('+x(mid)+',5)' })
     .attr('width', function(d) { return x(max) - x(mid) })
     .attr('height', height)
 
@@ -236,7 +237,7 @@ function drawKey(selected, min, mid, max, color, x) {
     .append('g').attr('class', 'axis')
 
   key.selectAll('.axis')
-    .attr('transform', 'translate(0,'+(height + 5)+')')
+    .attr('transform', 'translate(0,'+(height)+')')
     .call(axis)
 
   key
@@ -329,9 +330,7 @@ function drawMap(selected, color, x) {
       }
 
       function mouseout(e) {
-        $('#selected-tract').toggleClass('invisible')
-
-        focus(e)
+        // focus(e)
 
         baseLayer.resetStyle(e.target);
       }

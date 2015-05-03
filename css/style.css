@@ -124,16 +124,20 @@ svg#selected-tract-key {
   width: 150px;
 }
 
+label {
+  font-size: 12px;
+}
+
 /* Axis Styles */
 .axis path,
 .axis line {
     fill: none;
-    stroke: black;
+    stroke: none;
     shape-rendering: crispEdges;
 }
 
 .axis text {
-    font-family: sans-serif;
-    font-size: 11px;
+    /* font-family: sans-serif; */
+    font-size: 12px;
 }
 
