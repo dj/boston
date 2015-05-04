@@ -315,6 +315,15 @@ function drawMap(selected, color, x) {
           .attr('y2', 15)
       }
 
+      function showValOnKey(val) {
+        // Update the key
+        d3.select('#selected-tract-value-line')
+          .attr('x1', x(value))
+          .attr('y1', 0)
+          .attr('x2', x(value))
+          .attr('y2', 15)
+      }
+
       // Event handlers for the layer
       function mouseover(e) {
         focus(e)
@@ -332,20 +341,19 @@ function drawMap(selected, color, x) {
 
       // Keep track of the last tract that was clicked
       // so we can reset the style
-      // var lastTract;
+      var lastTract;
 
-      // function click(e) {
+      function click(e) {
         // Focus on current tract
-        // focus(e)
-        // e.target.setStyle({ weight: 3, color: 'black'})
+        e.target.setStyle({ weight: 3, color: 'black'})
 
-        // if (lastTract) {
-        //   baseLayer.resetStyle(lastTract)
-        //   lastTract = e.tract;
-        // } else {
-        //   lastTract = e.tract;
-        // }
-      // }
+        if (lastTract) {
+          baseLayer.resetStyle(lastTract)
+          lastTract = e.tract;
+        } else {
+          lastTract = e.tract;
+        }
+      }
 
       // Attach the event handlers to each tract
       layer.on({
