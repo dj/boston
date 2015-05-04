@@ -264,6 +264,10 @@ function drawMap(selected, color, x) {
   // + Create a base layer and attach event handlers
   // + Load the census tract TopoJSON with the base layer
 
+  // Keep track of the last tract that was clicked
+  // so we can reset the style
+  var lastTract;
+
   var baseLayer = L.geoJson(null, {
     style: function(feature) {
       function fill(id) {
@@ -333,10 +337,6 @@ function drawMap(selected, color, x) {
 
         baseLayer.resetStyle(e.target);
       }
-
-      // Keep track of the last tract that was clicked
-      // so we can reset the style
-      var lastTract;
 
       function click(e) {
         var value = tractsById.get(feature.properties.GEOID10)[selected];
