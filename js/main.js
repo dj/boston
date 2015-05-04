@@ -350,6 +350,10 @@ function drawMap(selected, color, x) {
         } else {
           lastTract = e.target;
         }
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+          e.target.bringToFront();
+        }
       }
 
       // Attach the event handlers to each tract
