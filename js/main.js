@@ -307,15 +307,10 @@ function drawMap(selected, color, x) {
         // $panelValue.text(formats[selected](value) +' '+ labels[selected])
         $panelValue.text(formats[selected](value))
 
-        // Update the key
-        d3.select('#selected-tract-value-line')
-          .attr('x1', x(value))
-          .attr('y1', 0)
-          .attr('x2', x(value))
-          .attr('y2', 15)
+        showValOnKey(value);
       }
 
-      function showValOnKey(val) {
+      function showValOnKey(value) {
         // Update the key
         d3.select('#selected-tract-value-line')
           .attr('x1', x(value))
@@ -344,7 +339,9 @@ function drawMap(selected, color, x) {
       var lastTract;
 
       function click(e) {
-        // Focus on current tract
+        var value = tractsById.get(feature.properties.GEOID10)[selected];
+        showValOnKey(value);
+
         e.target.setStyle({ weight: 3, color: 'black'})
 
         if (lastTract) {
@@ -359,7 +356,7 @@ function drawMap(selected, color, x) {
       layer.on({
         mouseover: mouseover,
         mouseout: mouseout,
-        // click: click,
+        click: click,
       });
     },
   })
