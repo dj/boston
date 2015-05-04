@@ -346,9 +346,9 @@ function drawMap(selected, color, x) {
 
         if (lastTract) {
           baseLayer.resetStyle(lastTract)
-          lastTract = e.tract;
+          lastTract = e.target;
         } else {
-          lastTract = e.tract;
+          lastTract = e.target;
         }
       }
 
