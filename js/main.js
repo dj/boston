@@ -27,7 +27,7 @@ var descriptions = {
   homeownership: "The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <span id='color-0'>Red</span> tracts have higher homeownership rates. <span id='color-1'>Blue</span> tracts have lower homeownership rates.",
   punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
   medincome: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
-  ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values, <span id='color-1'>Purple</span> tracts have lower median values.",
+  ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values. <span id='color-1'>Purple</span> tracts have lower median values.",
 }
 
 var colorRanges = {
