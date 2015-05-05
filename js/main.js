@@ -1,5 +1,5 @@
 var labels = {
-  punemployed: 'Unemployement',
+  punemployed: 'Unemployment',
   homeownership: 'Homeownership',
   // prentocc: 'Renter-occupied',
   medincome: 'Median Income',
