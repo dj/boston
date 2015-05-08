@@ -1,33 +1,45 @@
 var labels = {
-  punemployed: 'Unemployment',
-  homeownership: 'Homeownership',
+  // punemployed: 'Unemployment',
+  // homeownership: 'Homeownership',
   // prentocc: 'Renter-occupied',
-  medincome: 'Median Income',
-  ownmedval: 'Median Value',
+  // ownmedval: 'Median Value',
+  medhhinc: 'Median Income Map',
+  medgrossrent: 'Rent Burden Map',
 }
 
 var middles = {
-  // prentocc: { val: 0.661, label: '% renter occupied units in the City of Boston.' },
-  homeownership: { val: 0.341, label: 'Homeownership rate, 2009-2013' },
-  punemployed: { val: 0.072, label: 'unemployment rate in the City of Boston, December 2010'},
-  medincome: { val: 53601, label: 'Median household income, 2009-2013' },
-  ownmedval: { val: 371000, label: 'Median value of owner-occupied housing units, 2009-2013' },
+  medhhinc: 53601,
+  medgrossrent: 30,
 }
 
 var formats = {
   // prentocc: d3.format('.0%'),
-  homeownership: d3.format('.0%'), // percentage
-  punemployed: d3.format('.0%'), // percentage
-  medincome: function(d) { return '$' + d3.format(',.')(d) }, // currency
-  ownmedval: function(d) { return '$' + d3.format(',.')(d) }, // currency
+  // homeownership: d3.format('.0%'), // percentage
+  // punemployed: d3.format('.0%'), // percentage
+  // ownmedval: function(d) { return '$' + d3.format(',.')(d) }, // currency
+  medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
+  medgrossrent: function(d) { return d + '%' }, // percentage
 }
 
 var descriptions = {
   // prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
-  homeownership: "The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <span id='color-0'>Red</span> tracts have higher homeownership rates. <span id='color-1'>Blue</span> tracts have lower homeownership rates.",
-  punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
-  medincome: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
-  ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values. <span id='color-1'>Purple</span> tracts have lower median values.",
+  // homeownership: "The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <span id='color-0'>Red</span> tracts have higher homeownership rates. <span id='color-1'>Blue</span> tracts have lower homeownership rates.",
+  // punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
+  medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
+  // ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values. <span id='color-1'>Purple</span> tracts have lower median values.",
+  medgrossrent: "A <em>rent-burdened household</em> spends more than 30% of their household income on rent. This map shows <b>median gross rent as a percentage of household income (GRAPI)</b>. Darker tracts have a higher median GRAPI.",
+}
+
+function colorScale(selected, min, mid, max) {
+  if (selected == 'medhhinc') {
+    return d3.scale.linear()
+      .domain([min, mid, max])
+      .range(colorRanges['medhhinc'])
+  } else if (selected == 'medgrossrent') {
+    return d3.scale.linear()
+      .domain([min, mid, max])
+      .range(colorRanges[selected])
+  }
 }
 
 var colorRanges = {
@@ -46,15 +58,15 @@ var colorRanges = {
     '#ffffbf',
     '#d7191c',
   ],
-  medincome: [
+  medhhinc: [
     '#7b3294',
     '#ffffbf',
     '#008837',
   ],
-  ownmedval: [
-    '#7b3294',
+  medgrossrent: [
+    '#2c7bb6',
     '#ffffbf',
-    '#008837',
+    '#d7191c',
   ]
 }
 
@@ -81,7 +93,7 @@ L.control.attribution({
 
 // Load the data
 d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
-d3.csv('data/boston-census-2010.csv', parse, censusLoaded);
+d3.csv('data/join.csv', parse, censusLoaded);
 
 // Draw neighborhoods
 function neighborhoodsLoaded(err, data) {
@@ -109,16 +121,26 @@ var tractsById = d3.map()
 
 // Parse the rows of the CSV, coerce strings to nums
 function parse(row) {
-  var parsedRow = {
-    // prentocc: +row['prentocc'],
-    tract: +row['CT_ID_10'],
-    punemployed: +row['punemploy'],
-    homeownership: +row['homeownership'],
-    medincome: +row['medincome'],
-    ownmedval: +row['ownmedval'],
+  function each(d) {
+    if (d == '-0') {
+      return null;
+    } else if (d == '50.0+') {
+      return 50;
+    } else {
+      return +d;
+    }
   }
 
-  tractsById.set(row['CT_ID_10'], parsedRow);
+  var parsedRow = {
+    // prentocc: +row['prentocc'],
+    tract: +row['GEO.id2'],
+    // punemployed: +row['punemploy'],
+    // homeownership: +row['homeownership'],
+    medhhinc: each(row['medhhinc']),
+    medgrossrent: each(row['medgrossrent']),
+  }
+
+  tractsById.set(row['GEO.id2'], parsedRow);
 
   return parsedRow;
 }
@@ -136,7 +158,7 @@ function censusLoaded(err, rows) {
     .attr('value', function(d) {return d})
     .each(function(d) {
       var option = d3.select(this).attr('value')
-      if (option == 'punemployed') {
+      if (option == 'medhhinc') {
         d3.select(this).property('selected')
       }
     })
@@ -145,12 +167,14 @@ function censusLoaded(err, rows) {
   // Refresh select options
   $select.selectpicker('refresh');
 
+  var currentLayer;
+
   // Draw a new map and key. Kicks off everything.
   function changeData(e) {
     var selected = $(this).find('option:selected').val(),
         sorted = parseRows(rows, selected),
         min = d3.min(sorted, function(d) { return d.value }),
-        mid = middles[selected].val,
+        mid = middles[selected],
         max = d3.max(sorted, function (d) { return d.value }),
         width = 240;
 
@@ -161,15 +185,19 @@ function censusLoaded(err, rows) {
     $('#color-1').css('color', colorRanges[selected][0]);
 
     // Axes
-    var color = d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected]);
+    var color = colorScale(selected, min, mid, max)
     var x = d3.scale.linear()
       .domain([min, max])
       .range([0, width])
 
     drawKey(selected, min, mid, max, color, x);
-    drawMap(selected, color, x);
+
+    if (currentLayer) {
+      theMap.removeLayer(currentLayer);
+      currentLayer = drawMapLayer(selected, color, x);
+    } else {
+      currentLayer = drawMapLayer(selected, color, x);
+    }
   }
 
   // Change map type an init the map
@@ -258,7 +286,7 @@ function parseRows(rows, selected) {
 /*============================================================================*/
 /* LEAFLET MAP                                                                */
 /*============================================================================*/
-function drawMap(selected, color, x) {
+function drawMapLayer(selected, color, x) {
   // Plot Census Tracts
   // ==================
   // + Create a base layer and attach event handlers
@@ -276,7 +304,7 @@ function drawMap(selected, color, x) {
         if (tract && tract[selected]) {
           return color(tract[selected]);
         } else {
-          return 'grey';
+          return 'none';
         }
       }
 
@@ -357,15 +385,18 @@ function drawMap(selected, color, x) {
       }
 
       // Attach the event handlers to each tract
-      layer.on({
-        mouseover: mouseover,
-        mouseout: mouseout,
-        click: click,
-      });
+      var value = tractsById.get(feature.properties.GEOID10)[selected]
+      if (value) {
+        layer.on({
+          mouseover: mouseover,
+          mouseout: mouseout,
+          click: click,
+        });
+      }
     },
   })
 
   // Load TopoJSON and add to map
-  omnivore.topojson('data/tracts2010topo.json', {}, baseLayer).addTo(theMap)
+  return omnivore.topojson('data/tracts2010topo.json', {}, baseLayer).addTo(theMap)
 }
 
