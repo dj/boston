@@ -19,7 +19,7 @@ var formats = {
 
 var descriptions = {
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
-  medgrossrent: "A <em>rent-burdened household</em> spends more than 30% of their household income on rent. This map shows <b>median gross rent as a percentage of household income (GRAPI)</b>. Darker tracts have a higher median GRAPI.",
+  medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
 }
 
 function colorScale(selected, min, mid, max) {
@@ -288,7 +288,7 @@ function drawMapLayer(selected, color, x) {
       return {
         fillColor: fill(feature.properties.GEOID10),
         weight: 0,
-        fillOpacity: .65
+        fillOpacity: .75
       };
     },
 
