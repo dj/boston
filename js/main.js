@@ -93,7 +93,7 @@ L.control.attribution({
 
 // Load the data
 d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
-d3.csv('data/join.csv', parse, censusLoaded);
+d3.csv('data/boston-data.csv', parse, censusLoaded);
 
 // Draw neighborhoods
 function neighborhoodsLoaded(err, data) {
