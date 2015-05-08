@@ -13,20 +13,12 @@ var middles = {
 }
 
 var formats = {
-  // prentocc: d3.format('.0%'),
-  // homeownership: d3.format('.0%'), // percentage
-  // punemployed: d3.format('.0%'), // percentage
-  // ownmedval: function(d) { return '$' + d3.format(',.')(d) }, // currency
   medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
   medgrossrent: function(d) { return d + '%' }, // percentage
 }
 
 var descriptions = {
-  // prentocc: 'Percent of households that are renter-occupied by census tract. Red tracts are greater than the average of 66.1%, red tracts are less than the average.',
-  // homeownership: "The <b>homeownership rate</b> in Boston between 2009 and 2013 was <b>34.1%</b>. <span id='color-0'>Red</span> tracts have higher homeownership rates. <span id='color-1'>Blue</span> tracts have lower homeownership rates.",
-  // punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
-  // ownmedval: "The <b>median value of owner-occupied housing units</b> in Boston between 2009 and 2013 was <b>$371,000</b>. <span id='color-0'>Green</span> tracts have higher median values. <span id='color-1'>Purple</span> tracts have lower median values.",
   medgrossrent: "A <em>rent-burdened household</em> spends more than 30% of their household income on rent. This map shows <b>median gross rent as a percentage of household income (GRAPI)</b>. Darker tracts have a higher median GRAPI.",
 }
 
@@ -43,21 +35,6 @@ function colorScale(selected, min, mid, max) {
 }
 
 var colorRanges = {
-  // prentocc: [
-  //   '#d7191c',
-  //   '#ffffbf',
-  //   '#2c7bb6',
-  // ],
-  punemployed: [
-    '#1a9641',
-    '#ffffbf',
-    '#d7191c',
-  ],
-  homeownership: [
-    '#2c7bb6',
-    '#ffffbf',
-    '#d7191c',
-  ],
   medhhinc: [
     '#7b3294',
     '#ffffbf',
@@ -67,7 +44,7 @@ var colorRanges = {
     '#2c7bb6',
     '#ffffbf',
     '#d7191c',
-  ]
+  ],
 }
 
 // Show the about modal
