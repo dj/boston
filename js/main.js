@@ -5,24 +5,28 @@ var labels = {
   // ownmedval: 'Median Value',
   medhhinc: 'Median Income Map',
   medgrossrent: 'Rent Burden Map',
+  meancommute: 'Mean Commute Time',
 }
 
 var middles = {
   medhhinc: 53601,
   medgrossrent: 30,
   punemployed: 7.2,
+  // meancommute: null,
 }
 
 var formats = {
   punemployed: function(d) { return d + '%' }, // percentage
   medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
   medgrossrent: function(d) { return d + '%' }, // percentage
+  meancommute: function(d) { return d },
 }
 
 var descriptions = {
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
   medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
   punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
+  // meancommute:
 }
 
 var colorRanges = {
@@ -41,6 +45,11 @@ var colorRanges = {
     '#ffffbf',
     '#008837',
   ],
+  meancommute: [
+    '#fee0d2',
+    '#fc9272',
+    '#de2d26',
+  ],
 }
 
 function colorScale(selected, min, mid, max) {
@@ -55,6 +64,10 @@ function colorScale(selected, min, mid, max) {
   } else if (selected == 'punemployed') {
     return d3.scale.linear()
       .domain([min, mid, max])
+      .range(colorRanges[selected])
+  } else if (selected == 'meancommute') {
+    return d3.scale.quantize()
+      .domain([min, max])
       .range(colorRanges[selected])
   }
 }
@@ -127,6 +140,7 @@ function parse(row) {
     // homeownership: +row['homeownership'],
     medhhinc: each(row['medhhinc']),
     medgrossrent: each(row['medgrossrent']),
+    meancommute: each(row['meancommute']),
   }
 
   tractsById.set(row['GEO.id2'], parsedRow);
@@ -214,32 +228,54 @@ function drawKey(selected, min, mid, max, color, x) {
     .datum({ min: min })
     .attr('stop-color', function(d) { return color(d.min) })
 
-  d3.select('#gradient1-stop2')
+  // TODO: Abstract + Comment more
+  // If we have the mid parameter, make a scale with 2 gradients,
+  // one from min to mid and one from mid to max
+  if (mid) {
+    d3.select('#gradient1-stop2')
     .datum({ mid: mid })
     .attr('stop-color', function(d) { return color(d.mid) })
 
-  d3.select('#gradient2-stop1')
-    .datum({ mid: mid })
-    .attr('stop-color', function(d) { return color(d.mid) })
+    d3.select('#gradient2-stop1')
+      .datum({ mid: mid })
+      .attr('stop-color', function(d) { return color(d.mid) })
 
-  d3.select('#gradient2-stop2')
-    .datum({ max: max })
-    .attr('stop-color', function(d) { return color(d.max) })
+    d3.select('#gradient2-stop2')
+      .datum({ max: max })
+      .attr('stop-color', function(d) { return color(d.max) })
 
-  // Update gradient partition sizes
-  key.select('#gradient1-bar')
-    .datum({mid: mid})
-    .attr('transform', 'translate(0, 5)')
-    .attr('width', function(d) { return x(d.mid) })
-    .attr('height', height)
+    // Update gradient partition sizes
+    key.select('#gradient1-bar')
+      .datum({mid: mid})
+      .attr('transform', 'translate(0, 5)')
+      .attr('width', function(d) { return x(d.mid) })
+      .attr('height', height)
 
-  key.select('#gradient2-bar')
-    .datum({mid: mid})
-    .attr('transform', function(d) { return 'translate('+x(mid)+',5)' })
-    .attr('width', function(d) { return x(max) - x(mid) })
-    .attr('height', height)
+    key.select('#gradient2-bar')
+      .datum({mid: mid})
+      .attr('transform', function(d) { return 'translate('+x(mid)+',5)' })
+      .attr('width', function(d) { return x(max) - x(mid) })
+      .attr('height', height)
+  } else {
+  // If we don't have the mid parameter, make a scale with just
+  // 1 gradient from min to max
+    d3.select('#gradient1-stop2')
+      .datum({ max: max })
+      .attr('stop-color', function(d) { return color(d.max) })
 
-  var axis = d3.svg.axis()
+    key.select('#gradient1-bar')
+      .datum({max: max})
+      .attr('transform', 'translate(0, 5)')
+      .attr('width', function(d) { return x(d.max) })
+      .attr('height', height)
+
+    // Hide gradient-2
+    key.select('#gradient2-bar')
+      .datum({})
+      .attr('width', 0)
+  }
+
+    var axis = d3.svg.axis()
     .scale(x)
     .tickFormat(formats[selected])
     .tickValues([min, mid, max])
