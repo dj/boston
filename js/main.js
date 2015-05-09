@@ -1,6 +1,6 @@
 var labels = {
   punemployed: 'Unemployment Map',
-  // homeownership: 'Homeownership',
+  homeownership: 'Homeownership Map',
   // prentocc: 'Renter-occupied',
   // ownmedval: 'Median Value',
   medhhinc: 'Household Income Map',
@@ -13,6 +13,7 @@ var middles = {
   medgrossrent: 30,
   punemployed: 7.2,
   meancommute: 28.8,
+  homeownership: 34.1,
 }
 
 var formats = {
@@ -20,17 +21,24 @@ var formats = {
   medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
   medgrossrent: function(d) { return d + '%' }, // percentage
   meancommute: function(d) { return d },
+  homeownership: function(d) { return d + '%' }, // percentage
 }
 
 var descriptions = {
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
   medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
   punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
-  meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston of was 28.8 minutes (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower travel times. <span id='color-0'>Red</span> census tracts have higher travel times."
+  meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston of was 28.8 minutes (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower travel times. <span id='color-0'>Red</span> census tracts have higher travel times.",
+  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was 34.1% (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue census</span> tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates."
 }
 
 var colorRanges = {
   punemployed: [
+    '#2c7bb6',
+    '#ffffbf',
+    '#d7191c',
+  ],
+  homeownership: [
     '#2c7bb6',
     '#ffffbf',
     '#d7191c',
@@ -53,23 +61,9 @@ var colorRanges = {
 }
 
 function colorScale(selected, min, mid, max) {
-  if (selected == 'medhhinc') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected])
-  } else if (selected == 'medgrossrent') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected])
-  } else if (selected == 'punemployed') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected])
-  } else if (selected == 'meancommute') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected])
-  }
+  return d3.scale.linear()
+    .domain([min, mid, max])
+    .range(colorRanges[selected])
 }
 
 // Show the about modal
@@ -137,10 +131,10 @@ function parse(row) {
     // prentocc: +row['prentocc'],
     tract: +row['GEO.id2'],
     punemployed: +row['punemployed'],
-    // homeownership: +row['homeownership'],
     medhhinc: each(row['medhhinc']),
     medgrossrent: each(row['medgrossrent']),
     meancommute: each(row['meancommute']),
+    homeownership: +each(row['HD02_S181']),
   }
 
   tractsById.set(row['GEO.id2'], parsedRow);
