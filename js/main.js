@@ -1,5 +1,5 @@
 var labels = {
-  // punemployed: 'Unemployment',
+  punemployed: 'Unemployment',
   // homeownership: 'Homeownership',
   // prentocc: 'Renter-occupied',
   // ownmedval: 'Median Value',
@@ -10,9 +10,11 @@ var labels = {
 var middles = {
   medhhinc: 53601,
   medgrossrent: 30,
+  punemployed: 7.2,
 }
 
 var formats = {
+  punemployed: function(d) { return d + '%' }, // percentage
   medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
   medgrossrent: function(d) { return d + '%' }, // percentage
 }
@@ -20,31 +22,41 @@ var formats = {
 var descriptions = {
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
   medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
-}
-
-function colorScale(selected, min, mid, max) {
-  if (selected == 'medhhinc') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges['medhhinc'])
-  } else if (selected == 'medgrossrent') {
-    return d3.scale.linear()
-      .domain([min, mid, max])
-      .range(colorRanges[selected])
-  }
+  punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
 }
 
 var colorRanges = {
-  medhhinc: [
-    '#7b3294',
+  punemployed: [
+    '#2c7bb6',
     '#ffffbf',
-    '#008837',
+    '#d7191c',
   ],
   medgrossrent: [
     '#2c7bb6',
     '#ffffbf',
     '#d7191c',
   ],
+  medhhinc: [
+    '#7b3294',
+    '#ffffbf',
+    '#008837',
+  ],
+}
+
+function colorScale(selected, min, mid, max) {
+  if (selected == 'medhhinc') {
+    return d3.scale.linear()
+      .domain([min, mid, max])
+      .range(colorRanges[selected])
+  } else if (selected == 'medgrossrent') {
+    return d3.scale.linear()
+      .domain([min, mid, max])
+      .range(colorRanges[selected])
+  } else if (selected == 'punemployed') {
+    return d3.scale.linear()
+      .domain([min, mid, max])
+      .range(colorRanges[selected])
+  }
 }
 
 // Show the about modal
@@ -111,7 +123,7 @@ function parse(row) {
   var parsedRow = {
     // prentocc: +row['prentocc'],
     tract: +row['GEO.id2'],
-    // punemployed: +row['punemploy'],
+    punemployed: +row['punemployed'],
     // homeownership: +row['homeownership'],
     medhhinc: each(row['medhhinc']),
     medgrossrent: each(row['medgrossrent']),
