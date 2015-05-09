@@ -29,7 +29,7 @@ var descriptions = {
   medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
   punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
   meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston of was 28.8 minutes (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower travel times. <span id='color-0'>Red</span> census tracts have higher travel times.",
-  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was 34.1% (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue census</span> tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates."
+  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was 34.1% (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates."
 }
 
 var colorRanges = {
