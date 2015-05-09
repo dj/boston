@@ -1,18 +1,18 @@
 var labels = {
-  punemployed: 'Unemployment',
+  punemployed: 'Unemployment Map',
   // homeownership: 'Homeownership',
   // prentocc: 'Renter-occupied',
   // ownmedval: 'Median Value',
-  medhhinc: 'Median Income Map',
+  medhhinc: 'Household Income Map',
   medgrossrent: 'Rent Burden Map',
-  meancommute: 'Mean Commute Time',
+  meancommute: 'Travel Time To Work',
 }
 
 var middles = {
   medhhinc: 53601,
   medgrossrent: 30,
   punemployed: 7.2,
-  // meancommute: null,
+  meancommute: 28.8,
 }
 
 var formats = {
@@ -26,7 +26,7 @@ var descriptions = {
   medhhinc: "The <b>median household income</b> in Boston between 2009 and 2013 was <b>$53,601</b>. <span id='color-0'>Green</span> tracts have higher median household incomes. <span id='color-1'>Purple</span> tracts have lower median household incomes.",
   medgrossrent: "This map shows census tracts colored by <b>median gross rent as a percentage of household income (median GRAPI)</b>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%.",
   punemployed: "The <b>unemployment rate</b> in Boston, Dec 2010 was <b>7.2%</b>. <span id='color-0'>Red</span> tracts have higher unemployment. <span id='color-1'>Green</span> tracts have lower unemployment.",
-  // meancommute:
+  meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston of was 28.8 minutes (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower travel times. <span id='color-0'>Red</span> census tracts have higher travel times."
 }
 
 var colorRanges = {
@@ -46,9 +46,9 @@ var colorRanges = {
     '#008837',
   ],
   meancommute: [
-    '#fee0d2',
-    '#fc9272',
-    '#de2d26',
+    '#2c7bb6',
+    '#ffffbf',
+    '#d7191c',
   ],
 }
 
@@ -66,8 +66,8 @@ function colorScale(selected, min, mid, max) {
       .domain([min, mid, max])
       .range(colorRanges[selected])
   } else if (selected == 'meancommute') {
-    return d3.scale.quantize()
-      .domain([min, max])
+    return d3.scale.linear()
+      .domain([min, mid, max])
       .range(colorRanges[selected])
   }
 }
