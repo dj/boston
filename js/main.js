@@ -391,7 +391,9 @@ function drawMapLayer(selected, color, x) {
 
         e.target.setStyle({ weight: 3, color: 'black'})
 
-        if (lastTract) {
+        if (lastTract === e.target) {
+          return;
+        } else if (lastTract) {
           baseLayer.resetStyle(lastTract)
           lastTract = e.target;
         } else {
