@@ -70,7 +70,14 @@ function colorScale(selected, min, mid, max) {
 $('#about-modal').modal('show').addClass('fade');
 
 // Initialize the map
-var theMap = L.map('map', { zoomControl: false, attributionControl: false }).setView([42.3201, -71.0789], 12);
+var theMap = L.map('map', {
+  zoomControl: false,
+  attributionControl: false,
+  minZoom: 12,
+})
+
+// Set the init view and add a zoom control
+theMap.setView([42.3201, -71.0789], 12);
 new L.Control.Zoom({ position: 'bottomright' }).addTo(theMap);
 
 // Initialize the tile layer and add it to the map.
