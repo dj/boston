@@ -1,0 +1,59 @@
+GEO.id,Id
+GEO.id2,Id2
+GEO.display-label,Geography
+HC01_VC11,Estimate; EMPLOYMENT STATUS - Civilian labor force
+HC02_VC11,Margin of Error; EMPLOYMENT STATUS - Civilian labor force
+HC03_VC11,Percent; EMPLOYMENT STATUS - Civilian labor force
+HC04_VC11,Percent Margin of Error; EMPLOYMENT STATUS - Civilian labor force
+HC01_VC12,Estimate; EMPLOYMENT STATUS - Civilian labor force - Percent Unemployed
+HC02_VC12,Margin of Error; EMPLOYMENT STATUS - Civilian labor force - Percent Unemployed
+HC03_VC12,Percent; EMPLOYMENT STATUS - Civilian labor force - Percent Unemployed
+HC04_VC12,Percent Margin of Error; EMPLOYMENT STATUS - Civilian labor force - Percent Unemployed
+HC01_VC27,Estimate; COMMUTING TO WORK - Workers 16 years and over
+HC02_VC27,Margin of Error; COMMUTING TO WORK - Workers 16 years and over
+HC03_VC27,Percent; COMMUTING TO WORK - Workers 16 years and over
+HC04_VC27,Percent Margin of Error; COMMUTING TO WORK - Workers 16 years and over
+HC01_VC30,Estimate; COMMUTING TO WORK - Workers 16 years and over - Public transportation (excluding taxicab)
+HC02_VC30,Margin of Error; COMMUTING TO WORK - Workers 16 years and over - Public transportation (excluding taxicab)
+HC03_VC30,Percent; COMMUTING TO WORK - Workers 16 years and over - Public transportation (excluding taxicab)
+HC04_VC30,Percent Margin of Error; COMMUTING TO WORK - Workers 16 years and over - Public transportation (excluding taxicab)
+HC01_VC31,Estimate; COMMUTING TO WORK - Workers 16 years and over - Walked
+HC02_VC31,Margin of Error; COMMUTING TO WORK - Workers 16 years and over - Walked
+HC03_VC31,Percent; COMMUTING TO WORK - Workers 16 years and over - Walked
+HC04_VC31,Percent Margin of Error; COMMUTING TO WORK - Workers 16 years and over - Walked
+HC01_VC36,Estimate; COMMUTING TO WORK - Mean travel time to work (minutes)
+HC02_VC36,Margin of Error; COMMUTING TO WORK - Mean travel time to work (minutes)
+HC03_VC36,Percent; COMMUTING TO WORK - Mean travel time to work (minutes)
+HC04_VC36,Percent Margin of Error; COMMUTING TO WORK - Mean travel time to work (minutes)
+HC01_VC74,Estimate; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households
+HC02_VC74,Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households
+HC03_VC74,Percent; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households
+HC04_VC74,Percent Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households
+HC01_VC85,Estimate; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households - Median household income (dollars)
+HC02_VC85,Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households - Median household income (dollars)
+HC03_VC85,Percent; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households - Median household income (dollars)
+HC04_VC85,Percent Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Total households - Median household income (dollars)
+HC01_VC124,Estimate; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for workers (dollars)
+HC02_VC124,Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for workers (dollars)
+HC03_VC124,Percent; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for workers (dollars)
+HC04_VC124,Percent Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for workers (dollars)
+HC01_VC125,"Estimate; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for male full-time, year-round workers (dollars)"
+HC02_VC125,"Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for male full-time, year-round workers (dollars)"
+HC03_VC125,"Percent; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for male full-time, year-round workers (dollars)"
+HC04_VC125,"Percent Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for male full-time, year-round workers (dollars)"
+HC01_VC126,"Estimate; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for female full-time, year-round workers (dollars)"
+HC02_VC126,"Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for female full-time, year-round workers (dollars)"
+HC03_VC126,"Percent; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for female full-time, year-round workers (dollars)"
+HC04_VC126,"Percent Margin of Error; INCOME AND BENEFITS (IN 2013 INFLATION-ADJUSTED DOLLARS) - Median earnings for female full-time, year-round workers (dollars)"
+HC01_VC161,Estimate; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families
+HC02_VC161,Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families
+HC03_VC161,Percent; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families
+HC04_VC161,Percent Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families
+HC01_VC162,Estimate; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years
+HC02_VC162,Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years
+HC03_VC162,Percent; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years
+HC04_VC162,Percent Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years
+HC01_VC163,Estimate; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years - With related children under 5 years only
+HC02_VC163,Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years - With related children under 5 years only
+HC03_VC163,Percent; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years - With related children under 5 years only
+HC04_VC163,Percent Margin of Error; PERCENTAGE OF FAMILIES AND PEOPLE WHOSE INCOME IN THE PAST 12 MONTHS IS BELOW THE POVERTY LEVEL - All families - With related children under 18 years - With related children under 5 years only
