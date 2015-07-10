@@ -6,22 +6,33 @@ var labels = {
   medhhinc: 'Household Income Map',
   medgrossrent: 'Rent Burden Map',
   meancommute: 'Travel Time To Work',
+  walked: 'Walked to Work',
+  ptransport: 'Took Public Transport to Work',
+  poverty: 'Families in Poverty',
 }
 
 var middles = {
   medhhinc: 53601,
   medgrossrent: 30,
-  punemployed: 7.2,
+  punemployed: 7.3,
   meancommute: 28.8,
   homeownership: 34.1,
+  walked: 14.8,
+  ptransport: 33.5,
+  poverty: 17.6,
 }
 
+var percent = function(d) { return d + '%' };
+
 var formats = {
-  punemployed: function(d) { return d + '%' }, // percentage
-  medhhinc: function(d) { return '$' + d3.format(',.')(d) }, // currency
-  medgrossrent: function(d) { return d + '%' }, // percentage
+  punemployed: percent,
+  medhhinc: function(d) { return '$' + d3.format(',.')(d) },
+  medgrossrent: percent,
   meancommute: function(d) { return d },
-  homeownership: function(d) { return d + '%' }, // percentage
+  homeownership: percent,
+  walked: percent,
+  ptransport: percent,
+  poverty: percent,
 }
 
 var descriptions = {
@@ -29,7 +40,10 @@ var descriptions = {
   medhhinc: "The <a href='http://quickfacts.census.gov/qfd/meta/long_INC110213.htm'>median household income</a> in Boston between was <b>$53,601</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Purple</span> tracts have lower median household incomes. <span id='color-0'>Green</span> tracts have higher median household incomes.",
   medgrossrent: "This map shows census tracts colored by <a href='http://factfinder.census.gov/faces/affhelp/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_10_5YR_B25071#main_content'>median gross rent as a percentage of household income (GRAPI)</a>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%.",
   meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston of was <b>28.8 minutes</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Green</span> census tracts have lower travel times. <span id='color-0'>Purple</span> census tracts have higher travel times.",
-  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was <b>34.1%</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates."
+  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was <b>34.1%</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates.",
+  walked: 'In the City of Boston (2013) 14.8% of workers over 16 walked to work.',
+  ptransport: 'In the City of Boston (2013) 33.5% of workers over 16 took public transport (excluding taxicab) to work.',
+  poverty: 'In the City of Boston (2013) 17.6% of families had income in the past 12 months below the poverty level.',
 }
 
 var colorRanges = {
@@ -58,6 +72,21 @@ var colorRanges = {
     '#ffffbf',
     '#7b3294',
   ],
+  walked: [
+    '#7b3294',
+    '#ffffbf',
+    '#008837',
+  ],
+  ptransport: [
+    '#7b3294',
+    '#ffffbf',
+    '#008837',
+  ],
+  poverty: [
+    '#2c7bb6',
+    '#ffffbf',
+    '#d7191c',
+  ]
 }
 
 function colorScale(selected, min, mid, max) {
@@ -134,14 +163,19 @@ function parse(row) {
     }
   }
 
+  console.log(row);
+
   var parsedRow = {
     // prentocc: +row['prentocc'],
     tract: +row['GEO.id2'],
-    punemployed: +row['punemployed'],
-    medhhinc: each(row['medhhinc']),
-    medgrossrent: each(row['medgrossrent']),
-    meancommute: each(row['meancommute']),
-    homeownership: +each(row['HD02_S181']),
+    punemployed: +row['HC04_VC12'],
+    medhhinc: each(row['HC01_VC85']),
+    medgrossrent: each(row['HD01_VD01']),
+    meancommute: each(row['HC01_VC36']),
+    homeownership: +each(row['HD01_VD02']),
+    walked: each(row['HC03_VC31']),
+    ptransport: each(row['HC03_VC30']),
+    poverty: each(row['HC04_VC12']),
   }
 
   tractsById.set(row['GEO.id2'], parsedRow);
