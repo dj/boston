@@ -395,7 +395,12 @@ function drawMapLayer(selected, color, x) {
         })
 
         // Update the selected tract panel with the tract value
-        var value = tractsById.get(feature.properties.GEOID10)[selected];
+        var tract = tractsById.get(feature.properties.GEOID10)
+		
+		if (tract) {
+			var value = tract[selected];
+		}
+				[selected];
         // $panelValue.text(formats[selected](value) +' '+ labels[selected])
         $panelValue.text(formats[selected](value))
 
@@ -427,7 +432,12 @@ function drawMapLayer(selected, color, x) {
       }
 
       function click(e) {
-        var value = tractsById.get(feature.properties.GEOID10)[selected];
+        var tract = tractsById.get(feature.properties.GEOID10);
+
+		if (tract) {
+		  var value = tracted[selected];
+		}
+
         showValOnKey(value);
 
         e.target.setStyle({ weight: 3, color: 'black'})
@@ -447,8 +457,8 @@ function drawMapLayer(selected, color, x) {
       }
 
       // Attach the event handlers to each tract
-      var value = tractsById.get(feature.properties.GEOID10)[selected]
-      if (value) {
+      var tract = tractsById.get(feature.properties.GEOID10)
+      if (tract) {
         layer.on({
           mouseover: mouseover,
           mouseout: mouseout,
