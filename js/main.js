@@ -168,11 +168,11 @@ function parse(row) {
   var parsedRow = {
     // prentocc: +row['prentocc'],
     tract: +row['GEO.id2'],
-    punemployed: +row['HC04_VC12'],
+    punemployed: each(row['HC03_VC12']),
     medhhinc: each(row['HC01_VC85']),
     medgrossrent: each(row['HD01_VD01']),
     meancommute: each(row['HC01_VC36']),
-    homeownership: +each(row['HD01_VD02']),
+    homeownership: each(row['HD01_VD02']),
     walked: each(row['HC03_VC31']),
     ptransport: each(row['HC03_VC30']),
     poverty: each(row['HC03_VC161']),
