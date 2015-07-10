@@ -124,7 +124,7 @@ L.control.attribution({
 }).addTo(theMap);
 
 // Load the data
-d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
+// d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
 d3.csv('data/boston-data.csv', parse, censusLoaded);
 
 // Draw neighborhoods
