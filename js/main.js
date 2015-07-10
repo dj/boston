@@ -175,7 +175,7 @@ function parse(row) {
     homeownership: +each(row['HD01_VD02']),
     walked: each(row['HC03_VC31']),
     ptransport: each(row['HC03_VC30']),
-    poverty: each(row['HC04_VC12']),
+    poverty: each(row['HC03_VC161']),
   }
 
   tractsById.set(row['GEO.id2'], parsedRow);
