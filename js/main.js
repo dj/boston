@@ -36,14 +36,14 @@ var formats = {
 }
 
 var descriptions = {
-  punemployed: "The unemployment rate in the City of Boston (2013) was <b>7.3%</b>. (<a href='http://www.bls.gov/lau/lacilg10.htm'>2010</a>). <span id='color-1'>Blue</span> tracts have lower unemployment. <span id='color-0'>Red</span> tracts have higher unemployment.",
-  medhhinc: "The median household income in the City of Boston (2013) was <b>$53,601</b>. <span id='color-1'>Purple</span> tracts have lower median household incomes. <span id='color-0'>Green</span> tracts have higher median household incomes.",
-  medgrossrent: "This map shows census tracts colored by <a href='http://factfinder.census.gov/faces/affhelp/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_10_5YR_B25071#main_content'>median gross rent as a percentage of household income (GRAPI)</a>. Households that spend more than 30% of their income on rent are <b>rent-burdened</b>. <span id='color-1'>Blue</span> tracts have a median GRAPI lower than 30%. <span id='color-0'>Red</span> tracts have a  median GRAPI higher than 30%.",
-  meancommute: "The average <a href='http://quickfacts.census.gov/qfd/meta/long_LFE305213.htm'>travel time to work</a></b> in minutes in the City of Boston (2013) of was <b>28.8 minutes</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Green</span> census tracts have lower travel times. <span id='color-0'>Purple</span> census tracts have higher travel times.",
-  homeownership: "The <a href='http://quickfacts.census.gov/qfd/meta/long_HSG445213.htm'>homeownership rate</a> in the City of Boston was <b>34.1%</b> (<a href='http://quickfacts.census.gov/qfd/states/25/2507000.html'>2009-2013</a>). <span id='color-1'>Blue</span> census tracts have lower homeownership rates. <span id='color-0'>Red</span> tracts have higher rates.",
-  walked: 'In the City of Boston (2013) 14.8% of workers over 16 walked to work.',
-  ptransport: 'In the City of Boston (2013) 33.5% of workers over 16 took public transport (excluding taxicab) to work.',
-  poverty: 'In the City of Boston (2013) 17.6% of families had income in the past 12 months below the poverty level.',
+  punemployed: "<h1>The unemployment rate of workers 16 years and over in Boston was 7.3% (2006-2013).</h1><span id='color-1'>Blue</span> tracts had lower unemployment. <span id='color-0'>Red</span> tracts had higher unemployment.",
+  medhhinc: "<h1>The median household income in Boston was $53,601 (2006-2013).</h1><span id='color-1'>Purple</span> tracts had lower median household incomes. <span id='color-0'>Green</span> tracts had higher median household incomes.",
+  medgrossrent: "<h1>Households that spend more than 30% of their income on rent are rent-burdened.</h1>This map shows census tracts colored by <a href='http://factfinder.census.gov/faces/affhelp/jsf/pages/metadata.xhtml?lang=en&type=table&id=table.en.ACS_10_5YR_B25071#main_content'>median gross rent as a percentage of household income (GRAPI)</a>.  <span id='color-1'>Blue</span> census tracts had a median GRAPI lower than 30%. <span id='color-0'>Red</span> census tracts had a  median GRAPI higher than 30%.",
+  meancommute: "<h1>The average travel time to work in Boston was 28.8 minutes (2006-2013).</h1><span id='color-1'>Green</span> census tracts had lower average travel times. <span id='color-0'>Purple</span> census tracts had higher average travel times.",
+  homeownership: "<h1>The homeownership rate in Boston was 34.1% (2006-2013).</h1><span id='color-1'>Blue</span> census tracts had lower homeownership rates. <span id='color-0'>Red</span> census tracts had higher homeownership rates.",
+  walked: "<h1>14.8% of workers over 16 walked to work in Boston (2006-2013).</h1><span id='color-1'>Purple</span> census tracts had lower rates of walking. <span id='color-0'>Green</span> census tracts had higher rates of walking.",
+  ptransport: "<h1>33.5% of workers over 16 took public transport (excluding taxis) to work (2006-2013).</h1><span id='color-1'>Purple</span> census tracts had lower rates of public transport commuting. <span id='color-0'>Green</span> census tracts had higher rates.",
+  poverty: "<h1>17.6% of families had income in the past 12 months below the poverty level in Boston (2006-2013).</h1><span id='color-1'>Blue</span> census tracts had lower rates of poverty. <span id='color-0'>Red</span> census tracts had higher rates of poverty.",
 }
 
 var colorRanges = {
@@ -124,7 +124,7 @@ L.control.attribution({
 }).addTo(theMap);
 
 // Load the data
-// d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
+d3.json('data/boston-neighborhoods.json', neighborhoodsLoaded);
 d3.csv('data/boston-data.csv', parse, censusLoaded);
 
 // Draw neighborhoods
@@ -396,7 +396,7 @@ function drawMapLayer(selected, color, x) {
 
         // Update the selected tract panel with the tract value
         var tract = tractsById.get(feature.properties.GEOID10)
-		
+
 		if (tract) {
 			var value = tract[selected];
 		}
